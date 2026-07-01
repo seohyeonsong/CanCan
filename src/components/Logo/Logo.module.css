@@ -1,0 +1,8 @@
+.logo {
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  color: var(--color-grey-900);
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  text-transform: uppercase;
+}

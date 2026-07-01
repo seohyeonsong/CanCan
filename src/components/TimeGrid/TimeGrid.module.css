@@ -1,0 +1,217 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--color-grey-500);
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Grid layout */
+.grid {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  cursor: crosshair;
+}
+
+/* Time label column */
+.timeCol {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 52px;
+}
+
+.dateHeaderEmpty {
+  height: 42px;
+  flex-shrink: 0;
+}
+
+.timeLabel {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 9px;
+  color: var(--color-grey-400);
+  white-space: nowrap;
+  padding-right: 6px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.timeLabelHalf {
+  /* :30 row — no text, just spacing */
+  color: transparent;
+}
+
+.timeLabelLunch {
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.lunchBreak {
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--color-grey-400);
+  background: var(--color-grey-50);
+  border-top: 1px dashed var(--color-grey-200);
+  border-bottom: 1px dashed var(--color-grey-200);
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+.eveningBreak {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--color-grey-400);
+  background: var(--color-grey-100);
+  border-top: 1px dashed var(--color-grey-300);
+  border-bottom: 1px dashed var(--color-grey-300);
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
+/* Date column */
+.dateCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 44px;
+  flex: 1;
+}
+
+.dateHeader {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-grey-600);
+  white-space: pre;
+  text-align: center;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+/* Slot cell */
+.cell {
+  height: 20px;
+  border-radius: 2px;
+  cursor: crosshair;
+  transition: filter 80ms;
+  flex-shrink: 0;
+}
+
+.cell:hover {
+  filter: brightness(0.92);
+}
+
+/* Top border at hour boundary */
+.cellHourBoundary {
+  border-top: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Google Calendar imported slot — dashed outline */
+.cellFromCal {
+  outline: 2px dashed #f87171;
+  outline-offset: -2px;
+}
+
+/* 드래그 선택 or 툴팁 대기 중 하이라이트 */
+.cellHighlighted {
+  outline: 2px solid var(--color-primary) !important;
+  outline-offset: -1px;
+}
+
+/* 이전 참여자가 막은 슬롯 — 비활성 */
+.cellInactive {
+  background: var(--color-grey-100) !important;
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+/* Drag hint */
+.hint {
+  font-size: 11px;
+  color: var(--color-grey-400);
+  text-align: center;
+}
+
+/* Preference tooltip */
+.tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: white;
+  border-radius: 14px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.18),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  display: flex;
+  gap: 5px;
+  border: 1px solid var(--color-grey-200);
+}
+
+.tooltipArrow {
+  display: none;
+}
+
+.tooltipBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: filter 100ms, transform 100ms;
+  min-width: 56px;
+}
+
+.tooltipBtn:hover {
+  filter: brightness(0.94);
+  transform: scale(1.05);
+}
+
+.tooltipBtn:active {
+  transform: scale(0.97);
+}
+
+.tooltipIcon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.tooltipLabel {
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}

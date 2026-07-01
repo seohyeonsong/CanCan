@@ -1,0 +1,48 @@
+:root {
+  /* Colors */
+  /* CanCan — Toss blue 메인 + mint 그라데이션 액센트 */
+  --color-primary: #3182f6;
+  --color-primary-hover: #2272eb;
+  --color-primary-light: #eff6ff;
+  --color-primary-200: #dbeafe;  /* 연한 블루 라인·보더 */
+  --color-primary-dark: #1d4ed8;  /* 밝은 배경 위 텍스트용 */
+  --color-accent: #08b5a0;        /* 민트 — 그라데이션 액센트 전용 */
+  --color-error: #ef4444;
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  /* Grey scale (slate) — 단일 그레이 시스템 */
+  --color-grey-50: #f8fafc;
+  --color-grey-100: #f1f5f9;
+  --color-grey-200: #e2e8f0;
+  --color-grey-300: #cbd5e1;
+  --color-grey-400: #94a3b8;
+  --color-grey-500: #64748b;
+  --color-grey-600: #475569;
+  --color-grey-700: #334155;
+  --color-grey-800: #1e293b;
+  --color-grey-900: #0f172a;
+  --color-white: #ffffff;
+
+  /* Preference colors */
+  --color-pref-good: #3182f6;
+  --color-pref-okay: #e5e8eb;
+  --color-pref-flexible: #fe9800;
+  --color-pref-no: #f04452;
+
+  /* Typography */
+  --font-family: "Toss Product Sans", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Roboto, sans-serif;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  /* Shadow */
+  --shadow-card: 0px 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-elevated: 0px 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* Transition */
+  --transition-fast: 150ms cubic-bezier(0.4, 0.0, 1, 1);
+  --transition-standard: 250ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}

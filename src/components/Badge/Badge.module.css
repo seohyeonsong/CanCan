@@ -1,0 +1,16 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+
+.blue   { background: rgba(100,168,255,0.15); color: var(--color-primary-hover); }
+.green  { background: rgba(3,178,108,0.12);   color: #03b26c; }
+.yellow { background: rgba(254,152,0,0.12);   color: #d97706; }
+.orange { background: rgba(254,152,0,0.12);   color: #fe9800; }
+.grey   { background: rgba(2,32,71,0.05);     color: var(--color-grey-700); }
+.red    { background: rgba(240,68,82,0.12);   color: #f04452; }
