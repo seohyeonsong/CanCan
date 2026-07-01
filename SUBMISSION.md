@@ -1,7 +1,7 @@
 # CanCan — 토스 제출 답변
 
 > 제출 페이지 질문 3개에 대한 답변입니다. 그대로 복사해서 붙여넣거나, 길이 조절해서 쓰세요.
-> 제출물 링크: (Vercel 배포 URL) / GitHub: (레포 URL)
+> 제출물 링크: https://cancantime.vercel.app / GitHub: https://github.com/seohyeonsong/CanCan
 
 ---
 
