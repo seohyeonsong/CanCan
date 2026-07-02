@@ -198,18 +198,16 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
     <div className={styles.wrapper} style={{ userSelect: 'none' }}>
       {/* Legend */}
       <div className={styles.legend}>
-        {(['good', 'okay', 'flexible', 'no'] as Preference[]).map(p => (
+        {(['good', 'okay', 'flexible'] as Preference[]).map(p => (
           <div key={p} className={styles.legendItem}>
             <div className={styles.legendDot} style={{ background: PREF_COLORS[p], border: p === 'okay' ? '1px solid #cbd5e1' : 'none' }} />
             <span>{PREF_LABELS[p]}</span>
           </div>
         ))}
-        {calendarKeys && calendarKeys.size > 0 && (
-          <div className={styles.legendItem}>
-            <div className={styles.legendDot} style={{ background: '#fee2e2', border: '2px dashed #f87171' }} />
-            <span>구글 캘린더</span>
-          </div>
-        )}
+        <div className={styles.legendItem}>
+          <div className={styles.legendDot} style={{ background: '#eef1f5', border: '1px solid #e2e8f0' }} />
+          <span>안 됨</span>
+        </div>
       </div>
 
       {/* Grid */}
@@ -247,7 +245,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                 const fromCal = calendarKeys?.has(key)
                 const highlighted = isHighlighted(date, idx)
                 const inactive = activeKeys !== undefined && !activeKeys.has(key)
-                const cellBg = inactive ? undefined : highlighted ? 'rgba(49,130,246,0.35)' : pref ? PREF_COLORS[pref] : '#e8f0fe'
+                const cellBg = inactive ? undefined : highlighted ? 'rgba(49,130,246,0.35)' : (pref && pref !== 'no') ? PREF_COLORS[pref] : '#eef1f5'
                 return (
                   <div
                     key={itemIdx}
@@ -268,7 +266,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
       </div>
 
       {/* Drag hint */}
-      <p className={styles.hint}>드래그해서 시간 범위를 선택하세요</p>
+      <p className={styles.hint}>드래그해서 가능한 시간을 표시하세요 · 표시 안 한 칸은 참석 불가로 처리돼요</p>
 
       {/* Preference tooltip */}
       {tooltip && (
@@ -281,7 +279,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
           onMouseDown={e => e.stopPropagation()}
           onTouchStart={e => e.stopPropagation()}
         >
-          {(['good', 'okay', 'flexible', 'no'] as Preference[]).map(p => (
+          {(['good', 'okay', 'flexible'] as Preference[]).map(p => (
             <button
               key={p}
               className={styles.tooltipBtn}
@@ -296,6 +294,9 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
               <span className={styles.tooltipLabel}>{PREF_LABELS[p]}</span>
             </button>
           ))}
+          <button className={styles.tooltipClear} onClick={() => applyPref('no')}>
+            선택 지우기
+          </button>
         </div>
       )}
     </div>

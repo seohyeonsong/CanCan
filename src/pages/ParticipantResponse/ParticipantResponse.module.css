@@ -377,3 +377,30 @@
 }
 .demoCalNote span { flex-shrink: 0; }
 .demoCalNote b { color: var(--color-grey-700); }
+
+/* 온·오프라인 참여 방식 선택 (그리드 단계) */
+.formatPick { display: flex; flex-direction: column; gap: 8px; }
+.formatPickLabel { font-size: 13px; font-weight: 600; color: var(--color-grey-700); }
+.formatPickRow { display: flex; gap: 8px; }
+.formatPickBtn {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 4px;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-grey-200);
+  background: #fff;
+  color: var(--color-grey-500);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.formatPickBtnActive {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}

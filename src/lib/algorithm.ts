@@ -66,7 +66,7 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
 
       // 필수 참석자 중 어느 슬롯이라도 'no'면 제외
       const requiredBlocked = requiredParticipants.some(p =>
-        keys.some(key => (p.preferences[key] ?? 'okay') === 'no')
+        keys.some(key => (p.preferences[key] ?? 'no') === 'no')
       )
       if (requiredBlocked) continue
 
@@ -78,7 +78,7 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
 
       for (const p of requiredParticipants) {
         const worstPref = keys.reduce<Preference>((worst, key) => {
-          const pref = (p.preferences[key] ?? 'okay') as Preference
+          const pref = (p.preferences[key] ?? 'no') as Preference
           return PREF_SCORE[pref] < PREF_SCORE[worst] ? pref : worst
         }, 'good')
         totalScore += PREF_SCORE[worstPref]
@@ -88,7 +88,7 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
 
       for (const p of optionalParticipants) {
         const worstPref = keys.reduce<Preference>((worst, key) => {
-          const pref = (p.preferences[key] ?? 'okay') as Preference
+          const pref = (p.preferences[key] ?? 'no') as Preference
           return PREF_SCORE[pref] < PREF_SCORE[worst] ? pref : worst
         }, 'good')
         if (worstPref !== 'no') {
@@ -104,7 +104,7 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
       const offlineNames: string[] = []
 
       for (const p of respondedParticipants) {
-        const blocked = keys.some(key => (p.preferences[key] ?? 'okay') === 'no')
+        const blocked = keys.some(key => (p.preferences[key] ?? 'no') === 'no')
         if (blocked) {
           blockedNames.push(p.name)
         } else {

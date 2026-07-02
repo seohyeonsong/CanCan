@@ -1,24 +1,14 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { loadGoogleScript } from '../../lib/googleCalendar'
-import { initGoogleSignIn, renderSignInButton, getUser, saveUser } from '../../lib/auth'
+import { getUser, saveUser } from '../../lib/auth'
 import { seedDemoMeeting } from '../../lib/store'
 import styles from './Login.module.css'
 
 export function Login() {
   const navigate = useNavigate()
-  const btnRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (getUser()) { navigate('/meetings'); return }
-
-    loadGoogleScript().then(() => {
-      initGoogleSignIn((user) => {
-        console.log('로그인 성공', user)
-        navigate('/meetings')
-      })
-      if (btnRef.current) renderSignInButton(btnRef.current)
-    }).catch(console.error)
+    if (getUser()) { navigate('/meetings') }
   }, [navigate])
 
   function handleGuestLogin() {
@@ -45,8 +35,11 @@ export function Login() {
 
         <div className={styles.divider}><span>또는</span></div>
 
-        <div ref={btnRef} className={styles.googleBtn} />
-        <p className={styles.guestHint}>Google 계정으로 로그인하면 캘린더가 자동 연동돼요</p>
+        <button className={styles.googleDisabled} disabled>
+          Google 계정으로 로그인
+          <span className={styles.soonBadge}>준비 중</span>
+        </button>
+        <p className={styles.guestHint}>Google 캘린더 자동 연동은 곧 지원돼요</p>
       </div>
     </div>
   )

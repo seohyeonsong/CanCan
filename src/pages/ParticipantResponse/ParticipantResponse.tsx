@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getMeeting, submitResponse, addParticipant } from '../../lib/store'
-import { loadGoogleScript, initTokenClient, requestAccessToken, fetchBusySlots, mockBusySlots } from '../../lib/googleCalendar'
 import { TimeGrid } from '../../components/TimeGrid/TimeGrid'
 import { getDateRange } from '../../lib/algorithm'
 import type { Preference, Meeting, ParticipantResponse as ParticipantResponseType } from '../../types'
@@ -9,7 +8,7 @@ import { getUser } from '../../lib/auth'
 import { Logo } from '../../components/Logo/Logo'
 import styles from './ParticipantResponse.module.css'
 
-type Step = 'name' | 'calendar' | 'grid' | 'done'
+type Step = 'name' | 'grid' | 'done'
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
 function fmtDate(s: string) {
@@ -29,20 +28,10 @@ export function ParticipantResponse() {
   const [contact, setContact] = useState('')
   const [preferences, setPreferences] = useState<Record<string, Preference>>({})
   const [formatPreference, setFormatPreference] = useState<'online' | 'offline' | 'both'>('both')
-  const [isLoading, setIsLoading] = useState(false)
-  const [googleReady, setGoogleReady] = useState(false)
-  const [calendarKeys, setCalendarKeys] = useState<Set<string>>(new Set())
-  const [usedDemoCalendar, setUsedDemoCalendar] = useState(false)
 
   useEffect(() => {
     if (id) setMeeting(getMeeting(id))
   }, [id])
-
-  useEffect(() => {
-    loadGoogleScript().then(() => {
-      setGoogleReady(true)
-    }).catch(console.error)
-  }, [])
 
   if (!meeting) return <div className={styles.error}>회의를 찾을 수 없어요</div>
 
@@ -99,7 +88,7 @@ export function ParticipantResponse() {
         if (h === 12) continue
         for (const m of [0, 30] as const) {
           const key = `${date}-${h}-${m}`
-          const blocked = ref.some((p: ParticipantResponseType) => (p.preferences[key] ?? 'okay') === 'no')
+          const blocked = ref.some((p: ParticipantResponseType) => (p.preferences[key] ?? 'no') === 'no')
           if (!blocked) active.add(key)
         }
       }
@@ -108,62 +97,6 @@ export function ParticipantResponse() {
   }
 
   const activeKeys = computeActiveKeys()
-
-  function initEmptyPreferences(): Record<string, Preference> {
-    return {}
-  }
-
-  function applyDemoCalendar() {
-    if (!meeting) return
-    const result = mockBusySlots(meeting.dateRange.start, meeting.dateRange.end)
-    setPreferences(result.preferences)
-    setCalendarKeys(result.calendarKeys)
-    setUsedDemoCalendar(true)
-    setIsLoading(false)
-    setStep('grid')
-  }
-
-  function handleGoogleSync() {
-    if (!meeting) return
-    setIsLoading(true)
-
-    let settled = false
-
-    // 실제 Google 계정(등록된 origin·테스트 사용자)이면 진짜 캘린더를 불러온다.
-    if (googleReady) {
-      initTokenClient(async (_token) => {
-        if (settled) return
-        settled = true
-        try {
-          const result = await fetchBusySlots(meeting.dateRange.start, meeting.dateRange.end)
-          setPreferences(result.preferences)
-          setCalendarKeys(result.calendarKeys)
-          setUsedDemoCalendar(false)
-          setStep('grid')
-        } catch (e) {
-          console.error(e)
-          applyDemoCalendar()
-        } finally {
-          setIsLoading(false)
-        }
-      })
-      requestAccessToken()
-    }
-
-    // OAuth를 못 쓰는 환경(미등록 origin·팝업 차단·데모)에서는
-    // 2.5초 안에 응답이 없으면 예시 캘린더로 자동 폴백한다.
-    setTimeout(() => {
-      if (settled) return
-      settled = true
-      applyDemoCalendar()
-    }, googleReady ? 2500 : 300)
-  }
-
-  function handleManual() {
-    setIsLoading(false)
-    setPreferences(initEmptyPreferences())
-    setStep('grid')
-  }
 
   function handleSubmit() {
     if (!id || !name.trim() || !meeting) return
@@ -219,7 +152,7 @@ export function ParticipantResponse() {
                         <button
                           key={p.name}
                           className={`${styles.quickPickBtn} ${name === p.name ? styles.quickPickBtnActive : ''}`}
-                          onClick={() => { setName(p.name); setContact(p.contact ?? ''); setStep('calendar') }}
+                          onClick={() => { setName(p.name); setContact(p.contact ?? ''); setPreferences({}); setStep('grid') }}
                         >
                           {p.name}
                         </button>
@@ -267,7 +200,7 @@ export function ParticipantResponse() {
                 placeholder="홍길동"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('calendar')}
+                onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('grid')}
               />
             </div>
             <div className={styles.nameFieldGroup}>
@@ -278,7 +211,7 @@ export function ParticipantResponse() {
                 placeholder="카카오톡 ID · 전화번호 · 이메일"
                 value={contact}
                 onChange={e => setContact(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('calendar')}
+                onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('grid')}
               />
             </div>
             <p className={styles.contactHint}>동명이인 구분 및 일정 조율 연락에 사용돼요</p>
@@ -286,75 +219,9 @@ export function ParticipantResponse() {
           <button
             className={styles.primaryBtn}
             disabled={!name.trim()}
-            onClick={() => setStep('calendar')}
+            onClick={() => setStep('grid')}
           >
             다음
-          </button>
-        </div>
-      )}
-
-      {step === 'calendar' && (
-        <div className={styles.card}>
-          <h3 className={styles.stepTitle}>캘린더를 연동하면<br />바쁜 시간이 자동으로 반영돼요</h3>
-
-          <div className={styles.canIllustration}>
-            <svg width="56" height="78" viewBox="0 0 40 56" fill="none">
-              <rect x="4" y="10" width="32" height="36" rx="6" fill="var(--color-primary)" />
-              <ellipse cx="20" cy="10" rx="16" ry="5" fill="var(--color-primary)" />
-              <ellipse cx="20" cy="46" rx="16" ry="5" fill="var(--color-primary)" opacity="0.7" />
-              <rect x="9" y="14" width="4" height="24" rx="2" fill="white" opacity="0.25" />
-              <text x="20" y="32" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="12" fontWeight="700">G</text>
-            </svg>
-          </div>
-
-          {meeting.format === 'both' && (
-            <div style={{ marginBottom: 16 }}>
-              <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 8 }}>어떻게 참여하실 예정인가요?</p>
-              <div style={{ display: 'flex', gap: 8, width: '100%' }}>
-                {([
-                  { value: 'online', icon: '💻', label: '온라인' },
-                  { value: 'offline', icon: '🏢', label: '오프라인' },
-                  { value: 'both', icon: '✌️', label: '모두 가능' },
-                ] as { value: 'online' | 'offline' | 'both'; icon: string; label: string }[]).map(opt => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    style={{
-                      flex: 1,
-                      padding: '10px 4px',
-                      borderRadius: 10,
-                      border: formatPreference === opt.value ? '2px solid var(--color-primary)' : '1.5px solid #e2e8f0',
-                      background: formatPreference === opt.value ? 'var(--color-primary-light)' : 'white',
-                      color: formatPreference === opt.value ? 'var(--color-primary)' : '#64748b',
-                      fontSize: 12,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 4,
-                      whiteSpace: 'nowrap',
-                      minWidth: 0,
-                    }}
-                    onClick={() => setFormatPreference(opt.value)}
-                  >
-                    <span style={{ fontSize: 18 }}>{opt.icon}</span>
-                    <span>{opt.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <button
-            className={styles.primaryBtn}
-            onClick={handleGoogleSync}
-            disabled={isLoading}
-          >
-            {isLoading ? '불러오는 중...' : '📅 Google 캘린더 연동'}
-          </button>
-          <button className={styles.secondaryBtn} onClick={handleManual}>
-            직접 입력할게요
           </button>
         </div>
       )}
@@ -386,10 +253,26 @@ export function ParticipantResponse() {
             )}
           </div>
 
-          {usedDemoCalendar && (
-            <div className={styles.demoCalNote}>
-              <span>🗓️</span>
-              <p>데모 환경이라 <b>예시 캘린더</b>를 불러왔어요. 회색 칸이 기존 일정이에요 — 자유롭게 수정하세요.</p>
+          {meeting.format === 'both' && (
+            <div className={styles.formatPick}>
+              <p className={styles.formatPickLabel}>어떻게 참여하실 예정인가요?</p>
+              <div className={styles.formatPickRow}>
+                {([
+                  { value: 'online', icon: '💻', label: '온라인' },
+                  { value: 'offline', icon: '🏢', label: '오프라인' },
+                  { value: 'both', icon: '✌️', label: '모두 가능' },
+                ] as { value: 'online' | 'offline' | 'both'; icon: string; label: string }[]).map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`${styles.formatPickBtn} ${formatPreference === opt.value ? styles.formatPickBtnActive : ''}`}
+                    onClick={() => setFormatPreference(opt.value)}
+                  >
+                    <span style={{ fontSize: 18 }}>{opt.icon}</span>
+                    <span>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -397,7 +280,6 @@ export function ParticipantResponse() {
             dates={dates}
             preferences={preferences}
             onChange={(key, pref) => setPreferences(prev => ({ ...prev, [key]: pref }))}
-            calendarKeys={calendarKeys}
             activeKeys={activeKeys ?? undefined}
           />
 
