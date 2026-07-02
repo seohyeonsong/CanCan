@@ -175,16 +175,16 @@
 }
 
 .wordmark {
-  width: min(52vw, 210px);
+  width: min(70vw, 290px);
   height: auto;
-  margin: 0 auto 2px;
+  margin: 0 auto -28px;
   display: block;
 }
 
 .heroMachine {
   width: min(74vw, 300px);
   height: auto;
-  margin: 0 auto;
+  margin: -12px auto 0;
   display: block;
   filter: drop-shadow(0 16px 32px rgba(49,130,246,0.22));
 }
