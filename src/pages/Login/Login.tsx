@@ -21,8 +21,8 @@ export function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.hero}>
-        <img src="/bifinal.png" alt="" className={styles.heroMachine} />
         <img src="/logo.png" alt="CanCan" className={styles.wordmark} />
+        <img src="/bifinal.png" alt="" className={styles.heroMachine} />
       </div>
 
       <div className={styles.card}>

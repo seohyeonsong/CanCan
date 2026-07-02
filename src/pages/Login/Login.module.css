@@ -174,19 +174,19 @@
   line-height: 1.4;
 }
 
+.wordmark {
+  width: min(52vw, 210px);
+  height: auto;
+  margin: 0 auto 2px;
+  display: block;
+}
+
 .heroMachine {
-  width: min(58vw, 230px);
+  width: min(74vw, 300px);
   height: auto;
   margin: 0 auto;
   display: block;
   filter: drop-shadow(0 16px 32px rgba(49,130,246,0.22));
-}
-
-.wordmark {
-  width: min(62vw, 250px);
-  height: auto;
-  margin: 4px auto 0;
-  display: block;
 }
 
 .googleDisabled {
