@@ -232,6 +232,14 @@ export function unconfirmMeeting(meetingId: string): void {
   save(meetings)
 }
 
+export function removeParticipant(meetingId: string, name: string): void {
+  const meetings = load()
+  const meeting = meetings[meetingId]
+  if (!meeting) return
+  meeting.participants = meeting.participants.filter(p => p.name !== name)
+  save(meetings)
+}
+
 export function addParticipant(
   meetingId: string,
   name: string,

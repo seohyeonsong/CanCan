@@ -71,7 +71,7 @@ export function Confirmation() {
       </header>
 
       <div className={styles.card}>
-        <img src="/og.png" alt="" className={styles.heroGrip} />
+        <img src="/settime.png" alt="" className={styles.heroGrip} />
 
         <h2 className={styles.title}>회의가 확정됐어요</h2>
         <p className={styles.meetingName}>{meeting.title}</p>

@@ -45,7 +45,7 @@ export function ShareLink() {
       </header>
 
       <div className={styles.card}>
-        <img src="/machine.png" alt="" className={styles.heroImg} />
+        <img src="/bifinal.png" alt="" className={styles.heroImg} />
 
         <div className={styles.textBlock}>
           <h2 className={styles.title}>링크가 만들어졌어요</h2>

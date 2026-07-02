@@ -104,6 +104,48 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
     return () => window.removeEventListener('mouseup', onMouseUp)
   }, [])
 
+  // 터치(모바일) 드래그: 손가락 아래 셀을 추적
+  useEffect(() => {
+    function cellAt(x: number, y: number): { date: string; idx: number } | null {
+      const el = document.elementFromPoint(x, y)?.closest('[data-slot]')
+      if (!el) return null
+      const date = el.getAttribute('data-date')
+      const idx = Number(el.getAttribute('data-idx'))
+      if (date == null || Number.isNaN(idx)) return null
+      return { date, idx }
+    }
+    function onTouchMove(e: TouchEvent) {
+      const ds = dragStateRef.current
+      if (!ds) return
+      e.preventDefault()  // 드래그 중 스크롤 방지
+      const t = e.touches[0]
+      const c = cellAt(t.clientX, t.clientY)
+      if (c && c.date === ds.date) {
+        setDragState(prev => (prev ? { ...prev, endIdx: c.idx } : prev))
+      }
+    }
+    function onTouchEnd(e: TouchEvent) {
+      const ds = dragStateRef.current
+      if (!ds) return
+      e.preventDefault()  // 합성 mouse 이벤트 억제 (툴팁 자동 닫힘 방지)
+      const from = Math.min(ds.startIdx, ds.endIdx)
+      const to = Math.max(ds.startIdx, ds.endIdx)
+      const keys = SLOTS.slice(from, to + 1).map(s => slotKey(ds.date, s.hour, s.minute))
+      setDragState(null)
+      const t = e.changedTouches[0]
+      if (keys.length > 0) {
+        setPendingSelection({ date: ds.date, from, to })
+        setTooltip({ x: t.clientX, y: t.clientY, keys })
+      }
+    }
+    window.addEventListener('touchmove', onTouchMove, { passive: false })
+    window.addEventListener('touchend', onTouchEnd, { passive: false })
+    return () => {
+      window.removeEventListener('touchmove', onTouchMove)
+      window.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [])
+
   // 툴팁 바깥 클릭 → 닫기
   useEffect(() => {
     if (!tooltip) return
@@ -112,14 +154,22 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
       setPendingSelection(null)
     }
     window.addEventListener('mousedown', onDown)
-    return () => window.removeEventListener('mousedown', onDown)
+    window.addEventListener('touchstart', onDown)
+    return () => {
+      window.removeEventListener('mousedown', onDown)
+      window.removeEventListener('touchstart', onDown)
+    }
   }, [tooltip])
 
-  function handleMouseDown(e: React.MouseEvent, date: string, idx: number) {
-    e.preventDefault()
+  function handleStart(date: string, idx: number) {
     setTooltip(null)
     setPendingSelection(null)
     setDragState({ date, startIdx: idx, endIdx: idx })
+  }
+
+  function handleMouseDown(e: React.MouseEvent, date: string, idx: number) {
+    e.preventDefault()
+    handleStart(date, idx)
   }
 
   function handleMouseEnter(date: string, idx: number) {
@@ -201,10 +251,14 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                 return (
                   <div
                     key={itemIdx}
+                    data-slot=""
+                    data-date={date}
+                    data-idx={idx}
                     className={`${styles.cell} ${s.minute === 0 ? styles.cellHourBoundary : ''} ${fromCal ? styles.cellFromCal : ''} ${highlighted ? styles.cellHighlighted : ''} ${inactive ? styles.cellInactive : ''}`}
                     style={{ background: cellBg }}
                     onMouseDown={inactive ? undefined : e => handleMouseDown(e, date, idx)}
                     onMouseEnter={inactive ? undefined : () => handleMouseEnter(date, idx)}
+                    onTouchStart={inactive ? undefined : () => handleStart(date, idx)}
                   />
                 )
               })}
@@ -225,6 +279,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
             top: tooltip.y + 12,
           }}
           onMouseDown={e => e.stopPropagation()}
+          onTouchStart={e => e.stopPropagation()}
         >
           {(['good', 'okay', 'flexible', 'no'] as Preference[]).map(p => (
             <button

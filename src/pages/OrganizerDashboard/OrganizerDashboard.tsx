@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getMeeting, confirmMeeting, submitResponse, addParticipant } from '../../lib/store'
+import { getMeeting, confirmMeeting, submitResponse, addParticipant, removeParticipant } from '../../lib/store'
 import { getUser, clearUser } from '../../lib/auth'
 import { getRecommendations, getDateRange } from '../../lib/algorithm'
 import { RecommendationCard } from '../../components/RecommendationCard/RecommendationCard'
@@ -199,6 +199,7 @@ export function OrganizerDashboard() {
                       className={styles.canSlot}
                       onMouseEnter={() => setHoveredParticipant(p.name)}
                       onMouseLeave={() => setHoveredParticipant(null)}
+                      onClick={() => setHoveredParticipant(prev => prev === p.name ? null : p.name)}
                     >
                       <CanIcon name={p.name} size={56} pending={!p.submittedAt} showName={false} />
                       {hoveredParticipant === p.name && (
@@ -206,6 +207,17 @@ export function OrganizerDashboard() {
                           <span className={styles.popupName}>{p.name}</span>
                           {p.contact && <span className={styles.popupContact}>{p.contact}</span>}
                           <span className={styles.popupStatus}>{p.submittedAt ? '✓ 응답 완료' : '응답 대기'}</span>
+                          <button
+                            className={styles.popupRemove}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (id && confirm(`${p.name}님을 이 회의에서 제외할까요?`)) {
+                                removeParticipant(id, p.name)
+                                setHoveredParticipant(null)
+                                refresh()
+                              }
+                            }}
+                          >참여자 제외</button>
                         </div>
                       )}
                     </div>
