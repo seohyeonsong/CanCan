@@ -51,6 +51,17 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
       // 연속된 slotsNeeded개 슬롯을 모두 검사
       const startSlot = ALL_SLOTS[si]
       const slotRange = ALL_SLOTS.slice(si, si + slotsNeeded)
+
+      // 슬롯이 실제로 30분 간격으로 연속인지 확인 (점심 12시 건너뛰기로 인한 불연속 방지)
+      const contiguous = slotRange.every((s, i) => {
+        if (i === 0) return true
+        const prev = slotRange[i - 1]
+        const prevMin = prev.hour * 60 + prev.minute
+        const curMin = s.hour * 60 + s.minute
+        return curMin - prevMin === 30
+      })
+      if (!contiguous) continue
+
       const keys = slotRange.map(s => slotKey(date, s.hour, s.minute))
 
       // 필수 참석자 중 어느 슬롯이라도 'no'면 제외
