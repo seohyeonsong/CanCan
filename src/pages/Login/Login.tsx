@@ -31,9 +31,7 @@ export function Login() {
   return (
     <div className={styles.container}>
       <div className={styles.hero}>
-        <img src="/bifinal.png" alt="" className={styles.heroMachine} />
-        <h1 className={styles.logo}>CanCan</h1>
-        <p className={styles.tagline}>모두의 시간을<br />한 번에 맞추세요</p>
+        <img src="/bifinal.png" alt="CanCan" className={styles.heroMachine} />
       </div>
 
       <div className={styles.card}>

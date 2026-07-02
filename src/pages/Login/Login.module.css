@@ -175,9 +175,9 @@
 }
 
 .heroMachine {
-  width: 120px;
+  width: min(72vw, 300px);
   height: auto;
-  margin: 0 auto 2px;
+  margin: 0 auto;
   display: block;
-  filter: drop-shadow(0 10px 20px rgba(49,130,246,0.2));
+  filter: drop-shadow(0 16px 32px rgba(49,130,246,0.22));
 }
