@@ -32,9 +32,8 @@ export function Login() {
     <div className={styles.container}>
       <div className={styles.hero}>
         <img src="/bifinal.png" alt="" className={styles.heroMachine} />
-        <h1 className={styles.logo}>CANCAN</h1>
+        <h1 className={styles.logo}>CanCan</h1>
         <p className={styles.tagline}>모두의 시간을<br />한 번에 맞추세요</p>
-        <p className={styles.sub}>링크 하나로 회의 시간을 자동으로 추천받아요</p>
       </div>
 
       <div className={styles.card}>

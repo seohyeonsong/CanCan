@@ -401,9 +401,11 @@ export function ParticipantResponse() {
             activeKeys={activeKeys ?? undefined}
           />
 
-          <button className={styles.primaryBtn} onClick={handleSubmit}>
-            제출하기
-          </button>
+          <div className={styles.floatBar}>
+            <button className={styles.floatSubmit} onClick={handleSubmit}>
+              제출하기
+            </button>
+          </div>
         </div>
       )}
 
