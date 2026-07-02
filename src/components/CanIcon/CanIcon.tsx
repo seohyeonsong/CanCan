@@ -9,7 +9,7 @@ interface CanIconProps {
   colorIndex?: number
 }
 
-const POM_COLORS = ['blue', 'orange', 'mint', 'pink', 'purple', 'yellow']
+const POM_COLORS = ['blue', 'orange', 'mint', 'pink', 'purple', 'yellow', 'white']
 
 // 이름 기반 안정적 색 (colorIndex 없을 때 폴백)
 function pomColorByName(name: string): string {
