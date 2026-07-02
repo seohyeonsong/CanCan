@@ -38,15 +38,17 @@ export function Login() {
 
       <div className={styles.card}>
         <h2 className={styles.cardTitle}>시작하기</h2>
-        <p className={styles.cardDesc}>회사 Google 계정으로 로그인하세요</p>
-        <div ref={btnRef} className={styles.googleBtn} />
-
-        <div className={styles.divider}><span>또는</span></div>
+        <p className={styles.cardDesc}>로그인 없이 바로 체험해보세요</p>
 
         <button className={styles.guestBtn} onClick={handleGuestLogin}>
           데모 계정으로 둘러보기
         </button>
-        <p className={styles.guestHint}>로그인 없이 바로 핵심 흐름을 체험할 수 있어요</p>
+        <p className={styles.guestHint}>핵심 흐름을 로그인 없이 체험할 수 있어요</p>
+
+        <div className={styles.divider}><span>또는</span></div>
+
+        <div ref={btnRef} className={styles.googleBtn} />
+        <p className={styles.guestHint}>Google 로그인·캘린더 연동은 실서비스용이에요</p>
       </div>
     </div>
   )
