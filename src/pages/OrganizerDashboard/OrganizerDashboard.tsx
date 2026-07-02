@@ -193,7 +193,7 @@ export function OrganizerDashboard() {
                 <div className={styles.emptyDisplay}><p>링크를 공유해 참여자를 모아보세요</p></div>
               ) : (
                 <div className={styles.canRow}>
-                  {meeting.participants.map(p => (
+                  {meeting.participants.map((p, i) => (
                     <div
                       key={p.name}
                       className={styles.canSlot}
@@ -201,7 +201,7 @@ export function OrganizerDashboard() {
                       onMouseLeave={() => setHoveredParticipant(null)}
                       onClick={() => setHoveredParticipant(prev => prev === p.name ? null : p.name)}
                     >
-                      <CanIcon name={p.name} size={64} pending={!p.submittedAt} />
+                      <CanIcon name={p.name} size={64} pending={!p.submittedAt} colorIndex={i} />
                       {hoveredParticipant === p.name && (
                         <div className={styles.participantPopup}>
                           <span className={styles.popupName}>{p.name}</span>
