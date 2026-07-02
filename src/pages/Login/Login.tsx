@@ -46,7 +46,7 @@ export function Login() {
         <div className={styles.divider}><span>또는</span></div>
 
         <div ref={btnRef} className={styles.googleBtn} />
-        <p className={styles.guestHint}>Google 로그인·캘린더 연동은 실서비스용이에요</p>
+        <p className={styles.guestHint}>Google 계정으로 로그인하면 캘린더가 자동 연동돼요</p>
       </div>
     </div>
   )
