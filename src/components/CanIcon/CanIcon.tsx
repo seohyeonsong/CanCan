@@ -8,25 +8,27 @@ interface CanIconProps {
   showName?: boolean
 }
 
+const POM_COLORS = ['blue', 'mint', 'orange', 'pink', 'purple', 'yellow']
+
+// 이름 기반 안정적 색 배정
+function pomColor(name: string): string {
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0
+  return POM_COLORS[h % POM_COLORS.length]
+}
+
 export function CanIcon({ name, size = 48, pending = false, darkBg = false, showName = true }: CanIconProps) {
-  const height = Math.round(size * 1.5)
+  const color = pomColor(name)
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.canBox} style={{ width: size, height }}>
+      <div className={styles.canBox} style={{ width: size, height: size }}>
         <img
-          src="/can.png"
+          src={`/pom${color}.png`}
           alt=""
           className={styles.canImg}
-          style={{ filter: pending ? 'grayscale(1) brightness(1.1) opacity(0.5)' : 'none' }}
+          style={{ filter: pending ? 'grayscale(1) brightness(1.05) opacity(0.45)' : 'none' }}
         />
-        {/* 캔 라벨 밴드 */}
-        <span
-          className={styles.canLabel}
-          style={{ fontSize: Math.round(size * 0.2), opacity: pending ? 0.6 : 1 }}
-        >
-          {name}
-        </span>
       </div>
 
       {showName && (
