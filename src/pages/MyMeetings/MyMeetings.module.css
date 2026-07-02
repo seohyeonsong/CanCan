@@ -199,3 +199,96 @@
   color: #7e22ce;
   flex-shrink: 0;
 }
+
+/* 진입 카드 */
+.entryRow {
+  display: flex;
+  gap: 12px;
+}
+.entryCard {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 18px 16px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 1.5px solid transparent;
+  text-align: left;
+  transition: transform 150ms, box-shadow 150ms, border-color 150ms;
+}
+.entryCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+.entryCreate {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2f9fd0 100%);
+}
+.entryCreate .entryTitle, .entryCreate .entryDesc { color: #fff; }
+.entryCreate .entryDesc { opacity: 0.85; }
+.entryIcon { font-size: 22px; }
+.entryTitle { font-size: 16px; font-weight: 800; color: var(--color-grey-900); }
+.entryDesc { font-size: 12.5px; color: var(--color-grey-500); }
+
+/* 링크로 참여 입력 */
+.joinBox {
+  display: flex;
+  gap: 8px;
+}
+.joinInput {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-grey-200);
+  font-size: 14px;
+  outline: none;
+}
+.joinInput:focus { border-color: var(--color-primary); }
+.joinBtn {
+  flex-shrink: 0;
+  padding: 0 20px;
+  border-radius: 12px;
+  background: var(--color-grey-900);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* 온보딩 스텝 */
+.flowSteps { display: flex; flex-direction: column; gap: 2px; }
+.flowStep {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #fff;
+  border-radius: 14px;
+}
+.flowStep:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 31px;
+  bottom: -8px;
+  width: 2px; height: 12px;
+  background: var(--color-primary-200);
+  z-index: 0;
+}
+.flowIcon {
+  flex-shrink: 0;
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  background: var(--color-primary-light);
+  border-radius: 10px;
+  z-index: 1;
+}
+.flowText { display: flex; flex-direction: column; gap: 2px; }
+.flowStepTitle { font-size: 14px; font-weight: 700; color: var(--color-grey-900); }
+.flowStepDesc { font-size: 12.5px; color: var(--color-grey-500); line-height: 1.4; }

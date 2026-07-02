@@ -48,26 +48,6 @@ export function Login() {
         </button>
         <p className={styles.guestHint}>로그인 없이 바로 핵심 흐름을 체험할 수 있어요</p>
       </div>
-
-      <div className={styles.flow}>
-        <p className={styles.flowTitle}>이렇게 작동해요</p>
-        <ol className={styles.flowSteps}>
-          {[
-            { icon: '🔗', title: '링크 만들기', desc: '회의 정보를 입력하면 공유 링크가 생겨요' },
-            { icon: '🗓️', title: '참여자 응답', desc: '캘린더 연동 또는 직접 선택 · 로그인 불필요' },
-            { icon: '✨', title: 'AI 자동 추천', desc: '모두의 응답을 분석해 최적 시간을 추천해요' },
-            { icon: '📤', title: '확정 & 공유', desc: '시간을 확정하고 슬랙으로 바로 공유해요' },
-          ].map((s, i) => (
-            <li key={i} className={styles.flowStep}>
-              <span className={styles.flowIcon}>{s.icon}</span>
-              <div className={styles.flowText}>
-                <span className={styles.flowStepTitle}>{s.title}</span>
-                <span className={styles.flowStepDesc}>{s.desc}</span>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
     </div>
   )
 }

@@ -21,10 +21,19 @@ function formatDeadline(deadline: string) {
   return `D-${diff}`
 }
 
+const FLOW_STEPS = [
+  { icon: '🔗', title: '링크 만들기', desc: '회의 정보를 입력하면 공유 링크가 생겨요' },
+  { icon: '🗓️', title: '참여자 응답', desc: '캘린더 연동 또는 직접 선택 · 로그인 불필요' },
+  { icon: '✨', title: 'AI 자동 추천', desc: '모두의 응답을 분석해 최적 시간을 추천해요' },
+  { icon: '📤', title: '확정 & 공유', desc: '시간을 확정하고 슬랙으로 바로 공유해요' },
+]
+
 export function MyMeetings() {
   const navigate = useNavigate()
   const user = getUser()
   const [meetings, setMeetings] = useState<Meeting[]>([])
+  const [joinOpen, setJoinOpen] = useState(false)
+  const [joinValue, setJoinValue] = useState('')
 
   useEffect(() => {
     if (!user) { navigate('/login'); return }
@@ -36,13 +45,21 @@ export function MyMeetings() {
     navigate('/login')
   }
 
+  function handleJoin() {
+    const v = joinValue.trim()
+    if (!v) return
+    const m = v.match(/meeting\/([^/?#]+)/)
+    const id = m ? m[1] : v
+    navigate(`/meeting/${id}/respond`)
+  }
+
   const myMeetings = meetings.filter(m => m.ownerEmail === user?.email)
   const invitedMeetings = meetings.filter(m => m.ownerEmail !== user?.email)
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.logo}>CANCAN</h1>
+        <h1 className={styles.logo}>CanCan</h1>
         <div className={styles.userRow}>
           {user?.picture && <img src={user.picture} className={styles.avatar} alt="" />}
           <span className={styles.userName}>{user?.name}</span>
@@ -51,17 +68,49 @@ export function MyMeetings() {
       </header>
 
       <div className={styles.content}>
-        <div className={styles.titleRow}>
-          <h2 className={styles.pageTitle}>내 회의</h2>
-          <button className={styles.newBtn} onClick={() => navigate('/create')}>+ 새 회의</button>
+        {/* 진입 카드 */}
+        <div className={styles.entryRow}>
+          <button className={`${styles.entryCard} ${styles.entryCreate}`} onClick={() => navigate('/create')}>
+            <span className={styles.entryIcon}>🔗</span>
+            <span className={styles.entryTitle}>회의 만들기</span>
+            <span className={styles.entryDesc}>새 회의 링크를 만들어요</span>
+          </button>
+          <button className={styles.entryCard} onClick={() => setJoinOpen(o => !o)}>
+            <span className={styles.entryIcon}>✋</span>
+            <span className={styles.entryTitle}>링크로 참여하기</span>
+            <span className={styles.entryDesc}>받은 링크로 시간 응답</span>
+          </button>
         </div>
 
-        {meetings.length === 0 && (
-          <div className={styles.empty}>
-            <p className={styles.emptyText}>아직 회의가 없어요</p>
-            <button className={styles.emptyBtn} onClick={() => navigate('/create')}>첫 회의 만들기</button>
+        {joinOpen && (
+          <div className={styles.joinBox}>
+            <input
+              className={styles.joinInput}
+              placeholder="받은 회의 링크를 붙여넣으세요"
+              value={joinValue}
+              onChange={e => setJoinValue(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleJoin() }}
+              autoFocus
+            />
+            <button className={styles.joinBtn} onClick={handleJoin}>참여</button>
           </div>
         )}
+
+        {/* 온보딩 */}
+        <section className={styles.section}>
+          <h3 className={styles.sectionTitle}>이렇게 작동해요</h3>
+          <ol className={styles.flowSteps}>
+            {FLOW_STEPS.map((s, i) => (
+              <li key={i} className={styles.flowStep}>
+                <span className={styles.flowIcon}>{s.icon}</span>
+                <div className={styles.flowText}>
+                  <span className={styles.flowStepTitle}>{s.title}</span>
+                  <span className={styles.flowStepDesc}>{s.desc}</span>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
 
         {myMeetings.length > 0 && (
           <section className={styles.section}>
