@@ -224,24 +224,18 @@
   width: 100%;
 }
 
-/* 데스크탑: 로고 정중앙 + 아래 좌 자판기 / 우 카드 */
+/* 데스크탑: 중앙 스택 유지, 히어로만 키워서 비율 보정 */
 @media (min-width: 900px) {
   .wordmark {
-    width: 300px;
-    margin-bottom: 8px;
-  }
-  .heroRow {
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 88px;
+    width: 280px;
+    margin-bottom: -32px;
   }
   .heroMachine {
-    width: 340px;
-    margin: 0;
+    width: 290px;
+    margin-top: -12px;
   }
   .card {
     max-width: 380px;
-    padding: 36px 36px 40px;
+    padding: 32px 36px 36px;
   }
 }
