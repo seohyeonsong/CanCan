@@ -213,11 +213,12 @@ export function ParticipantResponse() {
               <input
                 className={styles.nameInput}
                 type="text"
-                placeholder="홍길동"
+                placeholder="홍길동 A"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('grid')}
               />
+              <p className={styles.nameHint}>💡 동명이인이 있다면 <b>홍길동 A</b>처럼 구분 표시를 꼭 붙여주세요</p>
             </div>
             <div className={styles.nameFieldGroup}>
               <label className={styles.nameLabel}>연락처 <span className={styles.optionalLabel}>(선택)</span></label>

@@ -272,10 +272,19 @@
 }
 
 .contactHint {
-  font-size: 11px;
-  color: var(--color-grey-400);
+  font-size: 12px;
+  color: var(--color-grey-500);
+  font-weight: 500;
   line-height: 1.4;
 }
+
+.nameHint {
+  font-size: 12px;
+  color: var(--color-grey-600);
+  font-weight: 500;
+  line-height: 1.5;
+}
+.nameHint b { color: var(--color-primary-dark); font-weight: 700; }
 
 .nameInput {
   width: 100%;
