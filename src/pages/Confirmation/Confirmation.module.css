@@ -29,12 +29,10 @@
 }
 
 .heroGrip {
-  margin: -40px -24px 8px;
+  margin: -40px -24px 4px;
   width: calc(100% + 48px);
   max-width: none;
-  height: 240px;
-  object-fit: cover;
-  object-position: center 30%;
+  height: auto;
   display: block;
 }
 
