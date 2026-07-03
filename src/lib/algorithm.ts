@@ -116,6 +116,9 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
         }
       }
 
+      // 아무도 참석 못 하는 시간은 추천하지 않는다
+      if (availableNames.length === 0) continue
+
       const tags: string[] = []
       if (flexibleCount > 0) tags.push(`조율 필요 ${flexibleCount}명`)
 

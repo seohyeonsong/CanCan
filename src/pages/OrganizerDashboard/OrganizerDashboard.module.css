@@ -690,3 +690,9 @@
   background: var(--color-grey-300);
   cursor: not-allowed;
 }
+
+.machineLogoImg {
+  width: 108px;
+  height: auto;
+  display: block;
+}

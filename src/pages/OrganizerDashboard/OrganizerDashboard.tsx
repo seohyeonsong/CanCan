@@ -181,7 +181,7 @@ export function OrganizerDashboard() {
             {/* 그라데이션 헤더 */}
             <div className={styles.machineTopPanel}>
               <div className={styles.machineLogoArea}>
-                <span className={styles.machineLogoText}>CANCAN</span>
+                <img src="/whitelogo.png" alt="CanCan" className={styles.machineLogoImg} />
                 <span className={styles.machineTagline}>TIME SELECTOR</span>
               </div>
               <div className={styles.machineStatusPanel}>
