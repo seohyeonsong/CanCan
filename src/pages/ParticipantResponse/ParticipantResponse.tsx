@@ -8,7 +8,7 @@ import { getUser } from '../../lib/auth'
 import { Logo } from '../../components/Logo/Logo'
 import styles from './ParticipantResponse.module.css'
 
-type Step = 'name' | 'grid' | 'done'
+type Step = 'name' | 'grid' | 'done' | 'pending'
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
 function fmtDate(s: string) {
@@ -34,8 +34,6 @@ export function ParticipantResponse() {
   }, [id])
 
   if (!meeting) return <div className={styles.error}>회의를 찾을 수 없어요</div>
-
-  const shareUrl = `${window.location.origin}/meeting/${id}/respond`
 
   // 이미 확정된 회의면 결과 화면
   if (meeting.confirmedSlot && step !== 'done') {
@@ -100,6 +98,14 @@ export function ParticipantResponse() {
 
   // "표시 안 함 = 불가" 모델이라, 가능 시간이 0개면 제출을 막는다 (빈 응답이 추천을 오염시킴)
   const markedCount = Object.values(preferences).filter(p => p !== 'no').length
+
+  // 확정 여부 재확인 — 확정됐으면 확정 화면, 아니면 대기 화면
+  function checkConfirmed() {
+    if (!id) return
+    const fresh = getMeeting(id)
+    setMeeting(fresh)
+    setStep(fresh?.confirmedSlot ? 'name' : 'pending')
+  }
 
   function handleSubmit() {
     if (!id || !name.trim() || !meeting || markedCount === 0) return
@@ -296,20 +302,27 @@ export function ParticipantResponse() {
 
       {step === 'done' && (
         <div className={styles.card}>
-          <div style={{ fontSize: 40 }}>✅</div>
+          <Logo size="md" />
           <h3 className={styles.stepTitle}>응답 완료!</h3>
           <p className={styles.doneDesc}>
-            {meeting.organizerName}님이 시간을 확정하면<br />아래 링크에서 확인할 수 있어요
+            {meeting.organizerName}님이 시간을 확정하면<br />여기에서 바로 확인할 수 있어요
           </p>
-          <div className={styles.linkBox}>
-            <span className={styles.linkText}>{shareUrl}</span>
-            <button
-              className={styles.copyBtn}
-              onClick={() => navigator.clipboard.writeText(shareUrl)}
-            >
-              복사
-            </button>
-          </div>
+          <button className={styles.primaryBtn} onClick={checkConfirmed}>
+            확정 결과 확인하기
+          </button>
+        </div>
+      )}
+
+      {step === 'pending' && (
+        <div className={styles.card}>
+          <img src="/bifinal.png" alt="" className={styles.pendingImg} />
+          <h3 className={styles.stepTitle}>아직 확정 전이에요</h3>
+          <p className={styles.doneDesc}>
+            {meeting.organizerName}님이 시간을 확정하면<br />이 링크에서 확인할 수 있어요
+          </p>
+          <button className={styles.secondaryBtn} onClick={checkConfirmed}>
+            다시 확인하기
+          </button>
         </div>
       )}
     </div>
