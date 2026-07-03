@@ -214,3 +214,26 @@
   font-size: 11px;
   font-weight: 700;
 }
+
+/* 데스크탑: 좌 히어로 / 우 시작 카드 2단 */
+@media (min-width: 900px) {
+  .container {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 96px;
+  }
+  .hero { flex-shrink: 0; }
+  .wordmark {
+    width: 340px;
+    margin-bottom: -40px;
+  }
+  .heroMachine {
+    width: 360px;
+    margin-top: -16px;
+  }
+  .card {
+    max-width: 380px;
+    padding: 36px 36px 40px;
+  }
+}
