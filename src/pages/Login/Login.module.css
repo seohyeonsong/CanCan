@@ -6,7 +6,7 @@
   justify-content: center;
   gap: 12px;
   padding: 24px 20px;
-  background: linear-gradient(160deg, var(--color-primary-light) 0%, var(--color-grey-50) 60%);
+  background: linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-primary-light) 12%, var(--color-grey-50) 65%);
 }
 
 .hero {
