@@ -27,12 +27,15 @@ function localDateStr(d: Date): string {
   return `${y}-${m}-${day}`
 }
 
+// 시드 데이터 스키마 버전 — 응답 모델이 바뀌면 올려서 기존 브라우저도 갱신
+const SEED_VERSION = '2'
+
 // 심사/데모용: 응답이 모두 모인 현실적인 회의를 1개 시딩한다.
 // 날짜는 접속 시점 기준으로 생성해 항상 "다가오는 회의"로 보이게 한다.
-// 이미 시딩돼 있으면 아무 것도 하지 않는다(멱등).
+// 같은 버전으로 이미 시딩돼 있으면 아무 것도 하지 않는다(멱등).
 export function seedDemoMeeting(ownerEmail: string): string {
   const meetings = load()
-  if (meetings[DEMO_ID]) return DEMO_ID
+  if (meetings[DEMO_ID] && localStorage.getItem('cancan_seed_v') === SEED_VERSION) return DEMO_ID
 
   // 다음 평일(월)부터 3일(월·화·수) 범위
   const base = new Date()
@@ -49,22 +52,10 @@ export function seedDemoMeeting(ownerEmail: string): string {
 
   const key = (date: string, hour: number, minute: 0 | 30) => `${date}-${hour}-${minute}`
 
-  // 근무시간 전체를 기본 'okay'로 채우는 헬퍼
-  function fill(base: Preference): Record<string, Preference> {
+  // "표시 안 함 = 불가" 모델: 가능한 시간만 희소하게 마킹한다
+  function marks(list: [string, number, 0 | 30, Preference][]): Record<string, Preference> {
     const p: Record<string, Preference> = {}
-    for (const date of dates) {
-      for (let h = 9; h <= 21; h++) {
-        if (h === 12) continue
-        p[key(date, h, 0)] = base
-        p[key(date, h, 30)] = base
-      }
-    }
-    return p
-  }
-
-  function withOverrides(base: Preference, overrides: [string, number, 0 | 30, Preference][]): Record<string, Preference> {
-    const p = fill(base)
-    for (const [date, h, m, pref] of overrides) p[key(date, h, m)] = pref
+    for (const [date, h, m, pref] of list) p[key(date, h, m)] = pref
     return p
   }
 
@@ -72,42 +63,46 @@ export function seedDemoMeeting(ownerEmail: string): string {
 
   const participants: Meeting['participants'] = [
     {
-      // 지훈 — 온라인 참여, 오전은 대체로 바쁨
+      // 지훈 (필수·온라인) — 오후 위주로 가능
       name: '지훈', isRequired: true, formatPreference: 'online',
-      preferences: withOverrides('okay', [
-        [d1, 14, 0, 'good'], [d1, 14, 30, 'good'], [d1, 15, 0, 'good'],
-        [d1, 9, 0, 'no'], [d1, 9, 30, 'no'], [d1, 10, 0, 'no'],
-        [d2, 16, 0, 'good'], [d2, 16, 30, 'good'],
-        [d3, 11, 0, 'no'], [d3, 11, 30, 'no'],
+      preferences: marks([
+        [d1, 10, 0, 'okay'], [d1, 10, 30, 'okay'],
+        [d1, 14, 0, 'good'], [d1, 14, 30, 'good'], [d1, 15, 0, 'good'], [d1, 15, 30, 'good'],
+        [d2, 14, 0, 'good'], [d2, 14, 30, 'good'],
+        [d2, 16, 0, 'okay'], [d2, 16, 30, 'okay'],
+        [d3, 11, 0, 'okay'], [d3, 11, 30, 'okay'],
       ]),
       submittedAt: now,
     },
     {
-      // 민아 — 오프라인 참여, 오후 롱미팅 있음
+      // 민아 (필수·오프라인) — 지훈과 d1 오후·d2 14시·d3 11시만 겹침
       name: '민아', isRequired: true, formatPreference: 'offline',
-      preferences: withOverrides('okay', [
-        [d1, 14, 0, 'good'], [d1, 14, 30, 'good'], [d1, 15, 0, 'good'],
-        [d2, 13, 0, 'no'], [d2, 13, 30, 'no'], [d2, 14, 0, 'no'], [d2, 14, 30, 'no'],
-        [d3, 10, 0, 'good'], [d3, 10, 30, 'good'],
+      preferences: marks([
+        [d1, 14, 0, 'good'], [d1, 14, 30, 'good'], [d1, 15, 0, 'okay'], [d1, 15, 30, 'okay'],
+        [d2, 10, 0, 'good'], [d2, 10, 30, 'good'],
+        [d2, 14, 0, 'okay'], [d2, 14, 30, 'okay'],
+        [d3, 11, 0, 'good'], [d3, 11, 30, 'good'],
       ]),
       submittedAt: now,
     },
     {
-      // 수빈 — 온·오프라인 모두 가능, 유연
+      // 수빈 (선택·모두 가능)
       name: '수빈', isRequired: false, formatPreference: 'both',
-      preferences: withOverrides('good', [
-        [d1, 9, 0, 'no'], [d1, 9, 30, 'no'],
-        [d2, 17, 0, 'flexible'], [d2, 17, 30, 'flexible'],
+      preferences: marks([
+        [d1, 9, 0, 'okay'], [d1, 9, 30, 'okay'],
+        [d1, 14, 0, 'good'], [d1, 14, 30, 'good'],
+        [d2, 14, 0, 'good'], [d2, 14, 30, 'good'],
+        [d3, 11, 0, 'okay'], [d3, 11, 30, 'okay'],
       ]),
       submittedAt: now,
     },
     {
-      // 태호 — 온라인 참여, 금요일 오전만 애매
+      // 태호 (선택·온라인) — d2 14시는 조율 가능
       name: '태호', isRequired: false, formatPreference: 'online',
-      preferences: withOverrides('okay', [
-        [d1, 14, 0, 'good'], [d1, 14, 30, 'good'], [d1, 15, 0, 'good'],
-        [d1, 16, 0, 'no'], [d1, 16, 30, 'no'],
-        [d3, 9, 0, 'no'], [d3, 9, 30, 'no'],
+      preferences: marks([
+        [d1, 14, 0, 'okay'], [d1, 14, 30, 'okay'],
+        [d1, 15, 0, 'good'], [d1, 15, 30, 'good'],
+        [d2, 14, 0, 'flexible'], [d2, 14, 30, 'flexible'],
       ]),
       submittedAt: now,
     },
@@ -129,6 +124,7 @@ export function seedDemoMeeting(ownerEmail: string): string {
 
   meetings[DEMO_ID] = meeting
   save(meetings)
+  localStorage.setItem('cancan_seed_v', SEED_VERSION)
   return DEMO_ID
 }
 
