@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting, unconfirmMeeting } from '../../lib/store'
+import { buildGoogleCalendarUrl } from '../../lib/calendarLink'
 import { Logo } from '../../components/Logo/Logo'
 import styles from './Confirmation.module.css'
 
@@ -99,6 +100,13 @@ export function Confirmation() {
       {/* 슬랙 공유 버튼 */}
       <button className={styles.slackBtn} onClick={handleCopy}>
         {copied ? '✓ 복사됐어요!' : '📋 슬랙에 공유할 메시지 복사'}
+      </button>
+
+      <button
+        className={styles.calBtn}
+        onClick={() => { const u = buildGoogleCalendarUrl(meeting); if (u) window.open(u, '_blank') }}
+      >
+        📅 캘린더에 추가하기
       </button>
 
       <button className={styles.newBtn} onClick={() => navigate('/meetings')}>
