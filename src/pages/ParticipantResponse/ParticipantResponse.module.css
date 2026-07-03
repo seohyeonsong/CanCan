@@ -416,3 +416,10 @@
   display: block;
   filter: drop-shadow(0 10px 20px rgba(49,130,246,0.18));
 }
+
+.finImg {
+  width: 200px;
+  height: auto;
+  display: block;
+  border-radius: 16px;
+}

@@ -61,7 +61,7 @@ export function ParticipantResponse() {
           </p>
         </div>
         <div className={styles.card}>
-          <div style={{ fontSize: 40 }}>🎉</div>
+          <img src="/fin.png" alt="" className={styles.finImg} />
           <h3 className={styles.stepTitle}>회의 시간이 확정됐어요!</h3>
           <div className={styles.confirmedTime}>{confirmedStr}</div>
           <p className={styles.confirmedSub}>{meeting.organizerName}님이 일정을 확정했어요</p>
