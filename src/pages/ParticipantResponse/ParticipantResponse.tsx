@@ -48,24 +48,24 @@ export function ParticipantResponse() {
     return (
       <div className={styles.container}>
         <header className={styles.header}><Logo size="sm" /></header>
-        <div className={styles.contextCard}>
-          <p className={styles.contextLabel}>회의 요청</p>
-          <h2 className={styles.contextTitle}>{meeting.title}</h2>
-          <p className={styles.contextMeta}>
-            {meeting.organizerName} · {meeting.durationMinutes}분
-            {meeting.format && (
-              <span style={{ marginLeft: 6 }}>
-                · {meeting.format === 'online' ? '💻 온라인' : meeting.format === 'offline' ? '📍 오프라인' : '🔀 온·오프라인'}
-                {meeting.location && ` (${meeting.location})`}
-              </span>
-            )}
-          </p>
-        </div>
+
+        <h2 className={styles.pageHeadline}>회의 시간이 확정됐어요!</h2>
+
         <div className={styles.card}>
           <img src="/fin.png" alt="" className={styles.finImg} />
-          <h3 className={styles.stepTitle}>회의 시간이 확정됐어요!</h3>
           <div className={styles.confirmedTime}>{confirmedStr}</div>
-          <p className={styles.confirmedSub}>{meeting.organizerName}님이 일정을 확정했어요</p>
+          <div className={styles.confirmedMeta}>
+            <p className={styles.confirmedMeetingTitle}>{meeting.title}</p>
+            <p className={styles.confirmedMetaLine}>
+              {meeting.organizerName} · {meeting.durationMinutes}분
+              {meeting.format && (
+                <span style={{ marginLeft: 6 }}>
+                  · {meeting.format === 'online' ? '💻 온라인' : meeting.format === 'offline' ? '📍 오프라인' : '🔀 온·오프라인'}
+                  {meeting.location && ` (${meeting.location})`}
+                </span>
+              )}
+            </p>
+          </div>
           <button
             className={styles.primaryBtn}
             onClick={() => { const u = buildGoogleCalendarUrl(meeting); if (u) window.open(u, '_blank') }}
