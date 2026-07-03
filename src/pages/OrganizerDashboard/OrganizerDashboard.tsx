@@ -180,10 +180,7 @@ export function OrganizerDashboard() {
           <section className={styles.machine}>
             {/* 그라데이션 헤더 */}
             <div className={styles.machineTopPanel}>
-              <div className={styles.machineLogoArea}>
-                <img src="/whitelogo.png" alt="CanCan" className={styles.machineLogoImg} />
-                <span className={styles.machineTagline}>TIME SELECTOR</span>
-              </div>
+              <img src="/whitelogo.png" alt="CanCan" className={styles.machineLogoImg} />
               <div className={styles.machineStatusPanel}>
                 <span className={styles.statusLed} />
                 <span className={styles.statusReadout}>{responded.length}/{meeting.participants.length} READY</span>

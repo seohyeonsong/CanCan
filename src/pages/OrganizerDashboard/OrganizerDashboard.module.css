@@ -221,7 +221,7 @@
 /* 상단 헤더 — 토스 블루 메인 + 민트 꼬리 */
 .machineTopPanel {
   background: linear-gradient(115deg, #3182f6 0%, #2f8fd8 68%, #12b4a3 100%);
-  padding: 18px 22px;
+  padding: 9px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -692,7 +692,7 @@
 }
 
 .machineLogoImg {
-  width: 108px;
+  width: 76px;
   height: auto;
   display: block;
 }
