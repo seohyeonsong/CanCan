@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getUser, clearUser } from '../../lib/auth'
 import { getMyMeetings } from '../../lib/store'
+import { Logo } from '../../components/Logo/Logo'
 import type { Meeting } from '../../types'
 import styles from './MyMeetings.module.css'
 
@@ -59,7 +60,7 @@ export function MyMeetings() {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <h1 className={styles.logo}>CanCan</h1>
+        <Logo size="sm" />
         <div className={styles.userRow}>
           {user?.picture && <img src={user.picture} className={styles.avatar} alt="" />}
           <span className={styles.userName}>{user?.name}</span>

@@ -4,18 +4,20 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg'
 }
 
+// logo.png(털글씨 워드마크) 너비 기준 사이즈
 const SIZE_MAP = {
-  sm: 18,
-  md: 26,
-  lg: 40,
+  sm: 92,
+  md: 128,
+  lg: 210,
 }
 
 export function Logo({ size = 'md' }: LogoProps) {
-  const fontSize = SIZE_MAP[size]
-
   return (
-    <span className={styles.logo} style={{ fontSize }}>
-      CANCAN
-    </span>
+    <img
+      src="/logo.png"
+      alt="CanCan"
+      className={styles.logo}
+      style={{ width: SIZE_MAP[size] }}
+    />
   )
 }
