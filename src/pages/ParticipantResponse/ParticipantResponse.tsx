@@ -98,8 +98,11 @@ export function ParticipantResponse() {
 
   const activeKeys = computeActiveKeys()
 
+  // "표시 안 함 = 불가" 모델이라, 가능 시간이 0개면 제출을 막는다 (빈 응답이 추천을 오염시킴)
+  const markedCount = Object.values(preferences).filter(p => p !== 'no').length
+
   function handleSubmit() {
-    if (!id || !name.trim() || !meeting) return
+    if (!id || !name.trim() || !meeting || markedCount === 0) return
     const loggedInUser = getUser()
     addParticipant(id, name.trim(), false, contact.trim() || undefined, loggedInUser?.email)
     const fp = meeting.format === 'both' ? formatPreference : undefined
@@ -284,8 +287,8 @@ export function ParticipantResponse() {
           />
 
           <div className={styles.floatBar}>
-            <button className={styles.floatSubmit} onClick={handleSubmit}>
-              제출하기
+            <button className={styles.floatSubmit} onClick={handleSubmit} disabled={markedCount === 0}>
+              {markedCount === 0 ? '가능한 시간을 1개 이상 표시해주세요' : '제출하기'}
             </button>
           </div>
         </div>

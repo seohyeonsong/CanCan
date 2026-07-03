@@ -91,8 +91,11 @@ export function OrganizerDashboard() {
     navigator.clipboard.writeText(respondUrl).then(() => alert('링크가 복사됐어요'))
   }
 
+  // 주최자는 필수 참석자라 빈 응답이 추천을 전멸시킴 → 가능 시간 0개면 제출 차단
+  const organizerMarkedCount = Object.values(preferences).filter(p => p !== 'no').length
+
   function handleOrganizerSubmit() {
-    if (!id || !meeting) return
+    if (!id || !meeting || organizerMarkedCount === 0) return
     addParticipant(id, meeting.organizerName, true)
     submitResponse(id, meeting.organizerName, preferences)
     setSubmitted(true)
@@ -321,8 +324,8 @@ export function OrganizerDashboard() {
               </div>
             ) : (
               <div className={styles.noResult}>
-                <p className={styles.noResultTitle}>조건에 맞는 시간이 없어요</p>
-                <p className={styles.noResultSub}>필수 참석자의 "안 돼요" 시간을 제외하면 겹치는 시간이 없어요.</p>
+                <p className={styles.noResultTitle}>모두 가능한 시간이 없어요</p>
+                <p className={styles.noResultSub}>필수 참석자들이 표시한 가능 시간이 서로 겹치지 않아요. 링크를 다시 공유해서 가능 시간을 더 표시해달라고 요청해보세요.</p>
               </div>
             )}
           </section>
@@ -347,8 +350,9 @@ export function OrganizerDashboard() {
           <button
             className={styles.submitBtn}
             onClick={handleOrganizerSubmit}
+            disabled={organizerMarkedCount === 0}
           >
-            {submitted ? '응답 수정 완료' : '내 응답 제출하기'}
+            {organizerMarkedCount === 0 ? '가능한 시간을 1개 이상 표시해주세요' : submitted ? '응답 수정 완료' : '내 응답 제출하기'}
           </button>
         </div>
       </div>{/* end respondColumn */}

@@ -96,7 +96,12 @@
   box-shadow: 0 6px 20px rgba(49,130,246,0.35);
   transition: background var(--transition-fast);
 }
-.floatSubmit:hover { background: var(--color-primary-hover); }
+.floatSubmit:hover:not(:disabled) { background: var(--color-primary-hover); }
+.floatSubmit:disabled {
+  background: var(--color-grey-300);
+  box-shadow: none;
+  cursor: not-allowed;
+}
 
 .gridHeader {
   display: flex;
