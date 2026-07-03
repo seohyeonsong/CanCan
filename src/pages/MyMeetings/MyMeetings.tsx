@@ -103,11 +103,10 @@ export function MyMeetings() {
           <ol className={styles.flowSteps}>
             {FLOW_STEPS.map((s, i) => (
               <li key={i} className={styles.flowStep}>
+                <span className={styles.flowStepNum}>{i + 1}</span>
                 <span className={styles.flowIcon}>{s.icon}</span>
-                <div className={styles.flowText}>
-                  <span className={styles.flowStepTitle}>{s.title}</span>
-                  <span className={styles.flowStepDesc}>{s.desc}</span>
-                </div>
+                <span className={styles.flowStepTitle}>{s.title}</span>
+                <span className={styles.flowStepDesc}>{s.desc}</span>
               </li>
             ))}
           </ol>

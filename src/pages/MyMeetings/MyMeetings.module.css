@@ -260,35 +260,41 @@
   font-weight: 700;
 }
 
-/* 온보딩 스텝 */
-.flowSteps { display: flex; flex-direction: column; gap: 2px; }
+/* 온보딩 스텝 — 2×2 그리드 */
+.flowSteps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
 .flowStep {
   position: relative;
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 16px 14px 14px;
   background: #fff;
-  border-radius: 14px;
+  border-radius: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
-.flowStep:not(:last-child)::after {
-  content: '';
+.flowStepNum {
   position: absolute;
-  left: 31px;
-  bottom: -8px;
-  width: 2px; height: 12px;
-  background: var(--color-primary-200);
-  z-index: 0;
+  top: 12px;
+  right: 12px;
+  width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  border-radius: 50%;
 }
 .flowIcon {
-  flex-shrink: 0;
-  width: 34px; height: 34px;
+  width: 36px; height: 36px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  font-size: 19px;
   background: var(--color-primary-light);
   border-radius: 10px;
-  z-index: 1;
 }
-.flowText { display: flex; flex-direction: column; gap: 2px; }
-.flowStepTitle { font-size: 14px; font-weight: 700; color: var(--color-grey-900); }
-.flowStepDesc { font-size: 12.5px; color: var(--color-grey-500); line-height: 1.4; }
+.flowStepTitle { font-size: 14.5px; font-weight: 800; color: var(--color-grey-900); }
+.flowStepDesc { font-size: 12px; color: var(--color-grey-500); line-height: 1.45; }
