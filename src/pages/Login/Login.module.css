@@ -215,22 +215,30 @@
   font-weight: 700;
 }
 
-/* 데스크탑: 좌 히어로 / 우 시작 카드 2단 */
+/* 로고 아래 [자판기 | 카드] 행 — 모바일은 세로 스택 */
+.heroRow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* 데스크탑: 로고 정중앙 + 아래 좌 자판기 / 우 카드 */
 @media (min-width: 900px) {
-  .container {
+  .wordmark {
+    width: 300px;
+    margin-bottom: 8px;
+  }
+  .heroRow {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 96px;
-  }
-  .hero { flex-shrink: 0; }
-  .wordmark {
-    width: 340px;
-    margin-bottom: -40px;
+    gap: 88px;
   }
   .heroMachine {
-    width: 360px;
-    margin-top: -16px;
+    width: 340px;
+    margin: 0;
   }
   .card {
     max-width: 380px;

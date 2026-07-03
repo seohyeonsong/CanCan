@@ -20,12 +20,12 @@ export function Login() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.hero}>
-        <img src="/logo.png" alt="CanCan" className={styles.wordmark} />
-        <img src="/bifinal.png" alt="" className={styles.heroMachine} />
-      </div>
+      <img src="/logo.png" alt="CanCan" className={styles.wordmark} />
 
-      <div className={styles.card}>
+      <div className={styles.heroRow}>
+        <img src="/bifinal.png" alt="" className={styles.heroMachine} />
+
+        <div className={styles.card}>
         <h2 className={styles.cardTitle}>시작하기</h2>
         <p className={styles.cardDesc}>로그인 없이 바로 체험해보세요</p>
 
@@ -41,6 +41,7 @@ export function Login() {
           <span className={styles.soonBadge}>준비 중</span>
         </button>
         <p className={styles.guestHint}>Google 캘린더 자동 연동은 곧 지원돼요</p>
+        </div>
       </div>
     </div>
   )
