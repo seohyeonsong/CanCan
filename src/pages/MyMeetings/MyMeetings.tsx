@@ -23,10 +23,10 @@ function formatDeadline(deadline: string) {
 }
 
 const FLOW_STEPS = [
-  { icon: '🔗', title: '링크 만들기', desc: '회의 정보를 입력하면 공유 링크가 생겨요' },
-  { icon: '🗓️', title: '참여자 응답', desc: '캘린더 연동 또는 직접 선택 · 로그인 불필요' },
-  { icon: '✨', title: 'AI 자동 추천', desc: '모두의 응답을 분석해 최적 시간을 추천해요' },
-  { icon: '📤', title: '확정 & 공유', desc: '시간을 확정하고 슬랙으로 바로 공유해요' },
+  { icon: '🔗', title: '링크 생성' },
+  { icon: '🗓️', title: '시간 응답' },
+  { icon: '✨', title: 'AI 추천' },
+  { icon: '📤', title: '확정·공유' },
 ]
 
 export function MyMeetings() {
@@ -97,20 +97,16 @@ export function MyMeetings() {
           </div>
         )}
 
-        {/* 온보딩 */}
-        <section className={styles.section}>
-          <h3 className={styles.sectionTitle}>이렇게 작동해요</h3>
-          <ol className={styles.flowSteps}>
-            {FLOW_STEPS.map((s, i) => (
-              <li key={i} className={styles.flowStep}>
-                <span className={styles.flowStepNum}>{i + 1}</span>
-                <span className={styles.flowIcon}>{s.icon}</span>
-                <span className={styles.flowStepTitle}>{s.title}</span>
-                <span className={styles.flowStepDesc}>{s.desc}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
+        {/* 흐름 한 줄 안내 */}
+        <ol className={styles.flowStrip}>
+          {FLOW_STEPS.map((s, i) => (
+            <li key={i} className={styles.flowChip}>
+              <span className={styles.flowChipIcon}>{s.icon}</span>
+              <span className={styles.flowChipLabel}>{s.title}</span>
+              {i < FLOW_STEPS.length - 1 && <span className={styles.flowArrow}>›</span>}
+            </li>
+          ))}
+        </ol>
 
         {myMeetings.length > 0 && (
           <section className={styles.section}>
