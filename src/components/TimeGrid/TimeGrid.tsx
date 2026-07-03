@@ -295,7 +295,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
             </button>
           ))}
           <button className={styles.tooltipClear} onClick={() => applyPref('no')}>
-            선택 지우기
+            선택 해제
           </button>
         </div>
       )}

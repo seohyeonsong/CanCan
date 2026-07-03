@@ -219,11 +219,12 @@
 
 .tooltipClear {
   margin-top: 4px;
-  padding: 8px;
+  padding: 8px 10px;
   border-radius: 8px;
   background: #f1f5f9;
   color: #64748b;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .tooltipClear:hover { background: #e2e8f0; }
