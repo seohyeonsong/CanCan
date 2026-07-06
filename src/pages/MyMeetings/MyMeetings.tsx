@@ -22,7 +22,6 @@ function formatDeadline(deadline: string) {
   return `D-${diff}`
 }
 
-const DOT_COLORS = ['#3182f6', '#f97316', '#08b5a0', '#ec4899', '#8b5cf6', '#eab308']
 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
 function formatConfirmed(slot: { date: string; hour: number; minute: number }) {
   const d = new Date(slot.date + 'T00:00:00')
@@ -163,69 +162,39 @@ function MeetingCard({ meeting: m, isOwner, responded, onClick }: {
   const respondedCount = m.participants.filter(p => p.submittedAt).length
   const total = m.participants.length
   const allIn = total > 0 && respondedCount === total
-
-  const statusClass = m.confirmedSlot ? styles.accentConfirmed
-    : !isOwner && !responded ? styles.accentPending
-    : styles.accentDefault
+  const pct = total > 0 ? Math.round((respondedCount / total) * 100) : 0
 
   return (
     <button className={styles.card} onClick={onClick}>
-      <span className={`${styles.accent} ${statusClass}`} />
-      <div className={styles.cardBody}>
-        <div className={styles.cardMain}>
-          <div className={styles.cardLeft}>
-            {m.confirmedSlot ? (
-              <span className={styles.badgeConfirmed}>확정</span>
-            ) : isOwner ? (
-              <span className={styles.badgeOwner}>주최</span>
-            ) : responded ? (
-              <span className={styles.badgeDone}>응답완료</span>
-            ) : (
-              <span className={styles.badgePending}>미응답</span>
-            )}
-            <span className={styles.cardTitle}>{m.title}</span>
-            {m.id === 'demo-kickoff' && <span className={styles.badgeDemo}>데모</span>}
-          </div>
-          <span className={styles.cardArrow}>›</span>
-        </div>
-
-        <div className={styles.cardMeta}>
-          <span>{formatDateRange(m.dateRange.start, m.dateRange.end)}</span>
-          <span>·</span>
-          <span>{m.durationMinutes}분</span>
-          {m.responseDeadline && !m.confirmedSlot && (
-            <><span>·</span><span className={styles.deadline}>{formatDeadline(m.responseDeadline)}</span></>
-          )}
-        </div>
-
+      <div className={styles.cardHead}>
+        <span className={styles.cardTitle}>{m.title}</span>
+        {m.id === 'demo-kickoff' && <span className={styles.badgeDemo}>데모</span>}
         {m.confirmedSlot ? (
-          <div className={styles.confirmedRow}>
-            <span className={styles.confirmedCheck}>✓</span>
-            {formatConfirmed(m.confirmedSlot)} 확정
-          </div>
-        ) : total > 0 ? (
-          <div className={styles.progressRow}>
-            <div className={styles.dots}>
-              {m.participants.map((p, i) => (
-                <span
-                  key={p.name}
-                  className={styles.dot}
-                  style={p.submittedAt
-                    ? { background: DOT_COLORS[i % DOT_COLORS.length] }
-                    : { background: 'transparent', border: '1.5px solid var(--color-grey-300)' }}
-                />
-              ))}
-            </div>
-            <span className={`${styles.progressLabel} ${allIn ? styles.progressDone : ''}`}>
-              {allIn ? '전원 응답 완료' : `${respondedCount}/${total} 응답`}
-            </span>
-          </div>
-        ) : (
-          <div className={styles.progressRow}>
-            <span className={styles.progressLabel}>아직 참여자가 없어요 · 링크를 공유해보세요</span>
-          </div>
-        )}
+          <span className={styles.chipConfirmed}>확정 완료</span>
+        ) : !isOwner && !responded ? (
+          <span className={styles.chipPending}>응답 필요</span>
+        ) : null}
       </div>
+
+      <p className={styles.cardDate}>
+        {formatDateRange(m.dateRange.start, m.dateRange.end)} · {m.durationMinutes}분
+        {m.responseDeadline && !m.confirmedSlot && <span className={styles.deadline}> · {formatDeadline(m.responseDeadline)}</span>}
+      </p>
+
+      {m.confirmedSlot ? (
+        <p className={styles.confirmedLine}>🗓️ {formatConfirmed(m.confirmedSlot)}</p>
+      ) : total > 0 ? (
+        <div className={styles.progressWrap}>
+          <div className={styles.progressTrack}>
+            <div className={styles.progressFill} style={{ width: `${pct}%` }} />
+          </div>
+          <span className={styles.progressText}>
+            {allIn ? '전원 응답' : `${respondedCount}/${total}`}
+          </span>
+        </div>
+      ) : (
+        <p className={styles.emptyText}>링크를 공유해 참여자를 모아보세요</p>
+      )}
     </button>
   )
 }
