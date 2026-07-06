@@ -79,29 +79,18 @@ export function ParticipantResponse() {
 
   const dates = getDateRange(meeting.dateRange.start, meeting.dateRange.end)
   const respondedParticipants = meeting.participants.filter(p => p.submittedAt !== null)
-  const isFirstParticipant = respondedParticipants.length === 0
 
-  // 이전 참여자 응답 기반으로 "아직 살아있는" 슬롯만 추출
-  // 필수 참여자가 '안 돼요'로 막은 슬롯은 제외
-  function computeActiveKeys(): Set<string> | null {
-    if (isFirstParticipant) return null  // 첫 참여자 → 전부 활성
-    const required = respondedParticipants.filter((p: ParticipantResponseType) => p.isRequired)
-    const ref = required.length > 0 ? required : respondedParticipants
-    const active = new Set<string>()
-    for (const date of dates) {
-      for (let h = 9; h <= 21; h++) {
-        if (h === 12) continue
-        for (const m of [0, 30] as const) {
-          const key = `${date}-${h}-${m}`
-          const blocked = ref.some((p: ParticipantResponseType) => (p.preferences[key] ?? 'no') === 'no')
-          if (!blocked) active.add(key)
-        }
-      }
+  // 나(현재 이름)를 제외한 앞선 응답자들의 가능 시간을 히트맵으로 겹쳐 보여준다.
+  // 슬롯을 잠그지 않으므로 아무도 못 고르는 상황이 생기지 않는다.
+  const others = respondedParticipants.filter((p: ParticipantResponseType) => p.name !== name.trim())
+  const isFirstParticipant = others.length === 0
+  const othersTotal = others.length
+  const othersCount: Record<string, number> = {}
+  for (const p of others) {
+    for (const [key, pref] of Object.entries(p.preferences)) {
+      if (pref !== 'no') othersCount[key] = (othersCount[key] ?? 0) + 1
     }
-    return active
   }
-
-  const activeKeys = computeActiveKeys()
 
   // "표시 안 함 = 불가" 모델이라, 가능 시간이 0개면 제출을 막는다 (빈 응답이 추천을 오염시킴)
   const markedCount = Object.values(preferences).filter(p => p !== 'no').length
@@ -246,10 +235,18 @@ export function ParticipantResponse() {
       {step === 'grid' && (
         <div className={styles.gridCard}>
           <div className={styles.gridHeader}>
+            {/* 누구로 응답 중인지 + 인라인 수정 */}
+            <div className={styles.whoBar}>
+              <span className={styles.whoName}>
+                <b>{name}</b>님으로 응답 중
+              </span>
+              <button className={styles.whoEdit} onClick={() => setStep('name')}>이름 수정</button>
+            </div>
+
             {meeting && name && isEditingExisting(meeting, name) ? (
               <div className={styles.editBanner}>
                 <span>✏️</span>
-                <p>{name}님의 응답을 수정하고 있어요. 완료 후 제출하기를 눌러주세요.</p>
+                <p>{name}님의 기존 응답을 수정하고 있어요. 완료 후 제출하기를 눌러주세요.</p>
               </div>
             ) : isFirstParticipant ? (
               <>
@@ -261,10 +258,10 @@ export function ParticipantResponse() {
               </>
             ) : (
               <>
-                <h3 className={styles.stepTitle}>후보 시간을 골라주세요</h3>
+                <h3 className={styles.stepTitle}>가능한 시간을 표시해주세요</h3>
                 <div className={styles.narrowBanner}>
-                  <span>앞선 {respondedParticipants.length}명 응답 기준 후보 {activeKeys?.size ?? 0}개 추렸어요</span>
-                  <span className={styles.narrowSub}>흐린 칸은 이미 불가능한 시간이에요</span>
+                  <span>이미 {othersTotal}명이 응답했어요 · <b>진한 칸</b>일수록 여러 명이 가능해요</span>
+                  <span className={styles.narrowSub}>겹치는 시간에 맞추면 조율이 빨라져요</span>
                 </div>
               </>
             )}
@@ -297,7 +294,8 @@ export function ParticipantResponse() {
             dates={dates}
             preferences={preferences}
             onChange={(key, pref) => setPreferences(prev => ({ ...prev, [key]: pref }))}
-            activeKeys={activeKeys ?? undefined}
+            othersCount={isFirstParticipant ? undefined : othersCount}
+            othersTotal={othersTotal}
           />
 
           <div className={styles.floatBar}>
@@ -318,6 +316,9 @@ export function ParticipantResponse() {
           <button className={styles.primaryBtn} onClick={checkConfirmed}>
             확정 결과 확인하기
           </button>
+          <button className={styles.secondaryBtn} onClick={() => setStep('grid')}>
+            내 응답 수정하기
+          </button>
         </div>
       )}
 
@@ -328,8 +329,11 @@ export function ParticipantResponse() {
           <p className={styles.doneDesc}>
             {meeting.organizerName}님이 시간을 확정하면<br />이 링크에서 확인할 수 있어요
           </p>
-          <button className={styles.secondaryBtn} onClick={checkConfirmed}>
+          <button className={styles.primaryBtn} onClick={checkConfirmed}>
             다시 확인하기
+          </button>
+          <button className={styles.secondaryBtn} onClick={() => setStep('grid')}>
+            내 응답 수정하기
           </button>
         </div>
       )}

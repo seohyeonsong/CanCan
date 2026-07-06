@@ -106,8 +106,36 @@
 .gridHeader {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
+
+.whoBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-grey-50);
+  border-radius: 10px;
+}
+.whoName {
+  font-size: 13px;
+  color: var(--color-grey-600);
+}
+.whoName b {
+  color: var(--color-grey-900);
+  font-weight: 700;
+}
+.whoEdit {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+}
+.whoEdit:hover { background: var(--color-primary-200); }
 
 .stepTitle {
   font-size: 18px;

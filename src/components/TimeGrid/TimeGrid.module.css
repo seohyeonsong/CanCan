@@ -129,6 +129,18 @@
   transition: filter 80ms;
   flex-shrink: 0;
   touch-action: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 히트맵: 이 슬롯에 가능한 사람 수 */
+.cellCount {
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1;
+  color: #06695d;
+  pointer-events: none;
 }
 
 .cell:hover {

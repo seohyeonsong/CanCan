@@ -8,6 +8,9 @@ interface TimeGridProps {
   onChange: (key: string, pref: Preference) => void
   calendarKeys?: Set<string>
   activeKeys?: Set<string>  // progressive narrowing: 비활성 슬롯은 흐리게 + 비인터랙티브
+  readOnly?: boolean        // 조회 전용 (참여자 응답 보기)
+  othersCount?: Record<string, number>  // 슬롯별 "이미 가능하다고 응답한 사람 수" (히트맵)
+  othersTotal?: number                  // 앞선 응답자 총원 (농도 정규화용)
 }
 
 type SlotItem =
@@ -69,7 +72,7 @@ const PREF_ICONS: Record<Preference, string> = {
   no:       '✕',
 }
 
-export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKeys }: TimeGridProps) {
+export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKeys, readOnly = false, othersCount, othersTotal = 0 }: TimeGridProps) {
   const [dragState, setDragState] = useState<{
     date: string; startIdx: number; endIdx: number
   } | null>(null)
@@ -162,6 +165,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
   }, [tooltip])
 
   function handleStart(date: string, idx: number) {
+    if (readOnly) return
     setTooltip(null)
     setPendingSelection(null)
     setDragState({ date, startIdx: idx, endIdx: idx })
@@ -208,6 +212,12 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
           <div className={styles.legendDot} style={{ background: '#eef1f5', border: '1px solid #e2e8f0' }} />
           <span>안 됨</span>
         </div>
+        {othersCount && othersTotal > 0 && (
+          <div className={styles.legendItem}>
+            <div className={styles.legendDot} style={{ background: 'rgba(8,181,160,0.6)' }} />
+            <span>진할수록 여러 명 가능</span>
+          </div>
+        )}
       </div>
 
       {/* Grid */}
@@ -245,7 +255,19 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                 const fromCal = calendarKeys?.has(key)
                 const highlighted = isHighlighted(date, idx)
                 const inactive = activeKeys !== undefined && !activeKeys.has(key)
-                const cellBg = inactive ? undefined : highlighted ? 'rgba(49,130,246,0.35)' : (pref && pref !== 'no') ? PREF_COLORS[pref] : '#eef1f5'
+                const mine = !!pref && pref !== 'no'
+                const others = othersCount?.[key] ?? 0
+                // 내 선택 > 하이라이트 > 남들 히트맵(민트 농도) > 빈 칸
+                let cellBg: string | undefined
+                if (inactive) cellBg = undefined
+                else if (highlighted) cellBg = 'rgba(49,130,246,0.35)'
+                else if (mine) cellBg = PREF_COLORS[pref as Preference]
+                else if (others > 0 && othersTotal > 0) {
+                  const t = 0.16 + 0.6 * Math.min(1, others / othersTotal)
+                  cellBg = `rgba(8,181,160,${t.toFixed(2)})`
+                } else cellBg = '#eef1f5'
+                const showCount = others > 0 && !mine && !highlighted && !inactive
+                const interactive = !readOnly && !inactive
                 return (
                   <div
                     key={itemIdx}
@@ -253,11 +275,13 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                     data-date={date}
                     data-idx={idx}
                     className={`${styles.cell} ${s.minute === 0 ? styles.cellHourBoundary : ''} ${fromCal ? styles.cellFromCal : ''} ${highlighted ? styles.cellHighlighted : ''} ${inactive ? styles.cellInactive : ''}`}
-                    style={{ background: cellBg }}
-                    onMouseDown={inactive ? undefined : e => handleMouseDown(e, date, idx)}
-                    onMouseEnter={inactive ? undefined : () => handleMouseEnter(date, idx)}
-                    onTouchStart={inactive ? undefined : () => handleStart(date, idx)}
-                  />
+                    style={{ background: cellBg, cursor: interactive ? 'pointer' : 'default' }}
+                    onMouseDown={interactive ? e => handleMouseDown(e, date, idx) : undefined}
+                    onMouseEnter={interactive ? () => handleMouseEnter(date, idx) : undefined}
+                    onTouchStart={interactive ? () => handleStart(date, idx) : undefined}
+                  >
+                    {showCount && <span className={styles.cellCount}>{others}</span>}
+                  </div>
                 )
               })}
             </div>
@@ -266,7 +290,9 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
       </div>
 
       {/* Drag hint */}
-      <p className={styles.hint}>드래그해서 가능한 시간을 표시하세요 · 표시 안 한 칸은 참석 불가로 처리돼요</p>
+      {!readOnly && (
+        <p className={styles.hint}>드래그해서 가능한 시간을 표시하세요 · 표시 안 한 칸은 참석 불가로 처리돼요</p>
+      )}
 
       {/* Preference tooltip */}
       {tooltip && (
