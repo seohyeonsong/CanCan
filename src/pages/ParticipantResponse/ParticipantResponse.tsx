@@ -93,6 +93,9 @@ export function ParticipantResponse() {
     }
   }
 
+  // 직접 입력한 이름이 이미 응답한 사람과 같으면 덮어쓰기 위험 → 경고
+  const nameClash = !!name.trim() && meeting.participants.some(p => p.name === name.trim() && p.submittedAt)
+
   // 나 말고 모두 응답했다면, 아무도 안 되는 칸은 골라도 소용없으니 잠근다
   const pendingOthers = meeting.participants.filter(p => p.name !== name.trim() && !p.submittedAt)
   const allOthersResponded = othersTotal > 0 && pendingOthers.length === 0
@@ -213,7 +216,13 @@ export function ParticipantResponse() {
                 onChange={e => setName(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('grid')}
               />
-              <p className={styles.nameHint}><Icon name="bulb" size={13} /> 동명이인이 있다면 <b>홍길동 A</b>처럼 구분 표시를 꼭 붙여주세요</p>
+              {nameClash ? (
+                <p className={styles.nameWarn}>
+                  <Icon name="bulb" size={13} /> 이미 <b>{name.trim()}</b>님이 응답했어요. 본인이면 위 <b>‘응답 수정’</b>에서 선택하고, 다른 사람이면 <b>{name.trim()} B</b>처럼 구분해 주세요.
+                </p>
+              ) : (
+                <p className={styles.nameHint}><Icon name="bulb" size={13} /> 동명이인이 있다면 <b>홍길동 A</b>처럼 구분 표시를 꼭 붙여주세요</p>
+              )}
             </div>
             <div className={styles.nameFieldGroup}>
               <label className={styles.nameLabel}>연락처 <span className={styles.optionalLabel}>(선택)</span></label>
