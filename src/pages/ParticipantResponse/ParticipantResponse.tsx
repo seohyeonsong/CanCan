@@ -214,11 +214,11 @@ export function ParticipantResponse() {
                 placeholder="홍길동 A"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('grid')}
+                onKeyDown={e => e.key === 'Enter' && name.trim() && !nameClash && setStep('grid')}
               />
               {nameClash ? (
-                <p className={styles.nameWarn}>
-                  <Icon name="bulb" size={13} /> 이미 <b>{name.trim()}</b>님이 응답했어요. 본인이면 위 <b>‘응답 수정’</b>에서 선택하고, 다른 사람이면 <b>{name.trim()} B</b>처럼 구분해 주세요.
+                <p className={styles.nameError}>
+                  <Icon name="x" size={13} /> 이미 <b>{name.trim()}</b>님이 응답했어요. 본인이면 위 <b>‘응답 수정’</b>을 누르고, 다른 사람이면 <b>{name.trim()} B</b>처럼 구분해 주세요.
                 </p>
               ) : (
                 <p className={styles.nameHint}><Icon name="bulb" size={13} /> 동명이인이 있다면 <b>홍길동 A</b>처럼 구분 표시를 꼭 붙여주세요</p>
@@ -232,14 +232,14 @@ export function ParticipantResponse() {
                 placeholder="카카오톡 ID · 전화번호 · 이메일"
                 value={contact}
                 onChange={e => setContact(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('grid')}
+                onKeyDown={e => e.key === 'Enter' && name.trim() && !nameClash && setStep('grid')}
               />
             </div>
             <p className={styles.contactHint}>동명이인 구분 및 일정 조율 연락에 사용돼요</p>
           </div>
           <button
             className={styles.primaryBtn}
-            disabled={!name.trim()}
+            disabled={!name.trim() || nameClash}
             onClick={() => setStep('grid')}
           >
             다음
