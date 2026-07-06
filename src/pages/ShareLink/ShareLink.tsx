@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting } from '../../lib/store'
+import { shareOrCopy, copyText } from '../../lib/share'
 import { Logo } from '../../components/Logo/Logo'
 import { Icon } from '../../components/Icon/Icon'
 import styles from './ShareLink.module.css'
@@ -22,33 +23,14 @@ function formatDeadline(deadline: string): string {
   return `${label}까지 · D-${diff}`
 }
 
-// clipboard API가 막힌 환경(비 https 등)에서도 동작하는 복사 헬퍼
-function copyText(text: string): Promise<void> {
-  if (navigator.clipboard?.writeText) {
-    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text))
-  }
-  return fallbackCopy(text)
-}
-function fallbackCopy(text: string): Promise<void> {
-  return new Promise(resolve => {
-    const ta = document.createElement('textarea')
-    ta.value = text
-    ta.style.position = 'fixed'
-    ta.style.opacity = '0'
-    document.body.appendChild(ta)
-    ta.select()
-    try { document.execCommand('copy') } catch { /* noop */ }
-    document.body.removeChild(ta)
-    resolve()
-  })
-}
 
 export function ShareLink() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const meeting = id ? getMeeting(id) : null
   const [copied, setCopied] = useState(false)
-  const [msgCopied, setMsgCopied] = useState(false)
+  const [shareResult, setShareResult] = useState<'shared' | 'copied' | null>(null)
+  const canShare = typeof (navigator as Navigator & { share?: unknown }).share === 'function'
 
   if (!meeting) return <div className={styles.error}>회의를 찾을 수 없어요</div>
 
@@ -72,10 +54,10 @@ export function ShareLink() {
     })
   }
 
-  function copyMessage() {
-    copyText(buildInviteMessage()).then(() => {
-      setMsgCopied(true)
-      setTimeout(() => setMsgCopied(false), 2000)
+  function shareInvite() {
+    shareOrCopy(buildInviteMessage(), respondUrl).then(res => {
+      setShareResult(res)
+      setTimeout(() => setShareResult(null), 2000)
     })
   }
 
@@ -108,11 +90,16 @@ export function ShareLink() {
           </button>
         </div>
 
-        <button className={styles.slackBtn} onClick={copyMessage}>
-          {msgCopied ? <><Icon name="check" size={16} /> 메시지가 복사됐어요!</> : <><Icon name="message" size={16} /> 슬랙 초대 메시지 복사</>}
+        <button className={styles.slackBtn} onClick={shareInvite}>
+          {shareResult === 'copied' ? <><Icon name="check" size={16} /> 메시지가 복사됐어요!</>
+            : shareResult === 'shared' ? <><Icon name="check" size={16} /> 공유했어요!</>
+            : <><Icon name="message" size={16} /> {canShare ? '슬랙·카톡으로 공유하기' : '슬랙 초대 메시지 복사'}</>}
         </button>
 
-        <p className={styles.hint}>슬랙이나 카카오톡에 붙여넣으면 끝!<br />링크를 받은 사람이 직접 시간을 입력해요.</p>
+        <p className={styles.hint}>
+          {canShare ? '공유 앱을 고르면 메시지가 채워진 채로 열려요.' : '슬랙이나 카카오톡에 붙여넣으면 끝!'}
+          <br />링크를 받은 사람이 직접 시간을 입력해요.
+        </p>
       </div>
 
       <button className={styles.dashboardBtn} onClick={() => navigate(`/meeting/${id}/dashboard`)}>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting, confirmMeeting, submitResponse, addParticipant, removeParticipant } from '../../lib/store'
+import { shareOrCopy } from '../../lib/share'
 import { getUser, clearUser } from '../../lib/auth'
 import { getRecommendations, getDateRange } from '../../lib/algorithm'
 import { RecommendationCard } from '../../components/RecommendationCard/RecommendationCard'
@@ -45,6 +46,7 @@ export function OrganizerDashboard() {
   const [showAdd, setShowAdd] = useState(false)
   const [newName, setNewName] = useState('')
   const [newRequired, setNewRequired] = useState(true)
+  const [shareToast, setShareToast] = useState<string | null>(null)
 
   function refresh() {
     if (!id) return
@@ -109,8 +111,32 @@ export function OrganizerDashboard() {
     navigate(`/meeting/${id}/confirmed`)
   }
 
-  function copyLink() {
-    navigator.clipboard.writeText(respondUrl).then(() => alert('링크가 복사됐어요'))
+  // 응답 안 한 사람 재촉 메시지
+  function shareNudge() {
+    const names = pending.map(p => p.name).join(', ')
+    const msg = [
+      `⏰ *${meeting!.title}* 회의 시간, 아직 안 정해졌어요!`,
+      names ? `${names} 님, 가능한 시간을 표시해주세요 🙏` : '가능한 시간을 표시해주세요 🙏',
+      '',
+      respondUrl,
+    ].join('\n')
+    shareOrCopy(msg, respondUrl).then(res => flash(res))
+  }
+
+  // 겹치는 시간이 없을 때 재조율 요청 메시지
+  function shareRecoordinate() {
+    const msg = [
+      `😥 *${meeting!.title}* 다들 가능한 시간이 겹치질 않아요.`,
+      '가능한 시간을 조금만 더 표시해주실 수 있을까요?',
+      '',
+      respondUrl,
+    ].join('\n')
+    shareOrCopy(msg, respondUrl).then(res => flash(res))
+  }
+
+  function flash(res: 'shared' | 'copied') {
+    setShareToast(res === 'copied' ? '메시지가 복사됐어요' : '공유했어요')
+    setTimeout(() => setShareToast(null), 2000)
   }
 
   // 주최자는 필수 참석자라 빈 응답이 추천을 전멸시킴 → 가능 시간 0개면 제출 차단
@@ -127,6 +153,7 @@ export function OrganizerDashboard() {
 
   return (
     <div className={styles.container}>
+      {shareToast && <div className={styles.shareToast}>{shareToast}</div>}
       {/* 상단 네비 */}
       <nav className={styles.topbar}>
         <button className={styles.topbarLogo} onClick={() => navigate('/meetings')} aria-label="내 회의로">
@@ -255,7 +282,7 @@ export function OrganizerDashboard() {
               ) : (
                 <>
                   <span className={styles.messageText}>● {pending.length}명 응답 대기 중</span>
-                  <button className={styles.resendBtn} onClick={copyLink}>링크 재발송</button>
+                  <button className={styles.resendBtn} onClick={shareNudge}><Icon name="message" size={13} /> 응답 재촉</button>
                 </>
               )}
             </div>
@@ -368,7 +395,10 @@ export function OrganizerDashboard() {
             ) : (
               <div className={styles.noResult}>
                 <p className={styles.noResultTitle}>모두 가능한 시간이 없어요</p>
-                <p className={styles.noResultSub}>필수 참석자들이 표시한 가능 시간이 서로 겹치지 않아요. 링크를 다시 공유해서 가능 시간을 더 표시해달라고 요청해보세요.</p>
+                <p className={styles.noResultSub}>필수 참석자들이 표시한 가능 시간이 서로 겹치지 않아요. 가능한 시간을 더 표시해달라고 요청해보세요.</p>
+                <button className={styles.recoordBtn} onClick={shareRecoordinate}>
+                  <Icon name="message" size={15} /> 다시 조율 요청 보내기
+                </button>
               </div>
             )}
           </section>

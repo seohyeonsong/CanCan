@@ -755,3 +755,41 @@
   height: auto;
   display: block;
 }
+
+/* 조율 재요청 버튼 (겹치는 시간 없음) */
+.recoordBtn {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 18px;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 150ms, transform 100ms;
+}
+.recoordBtn:hover { background: var(--color-primary-hover); }
+.recoordBtn:active { transform: scale(0.97); }
+
+/* 공유 완료 토스트 */
+.shareToast {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  z-index: 60;
+  padding: 12px 20px;
+  background: var(--color-grey-900);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  animation: toastIn 200ms ease;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translate(-50%, 8px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}

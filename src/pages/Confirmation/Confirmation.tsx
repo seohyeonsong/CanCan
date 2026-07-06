@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting, unconfirmMeeting } from '../../lib/store'
+import { shareOrCopy } from '../../lib/share'
 import { buildGoogleCalendarUrl } from '../../lib/calendarLink'
 import { Logo } from '../../components/Logo/Logo'
 import { Icon, formatMeta } from '../../components/Icon/Icon'
@@ -11,7 +12,8 @@ const DAYS = ['일', '월', '화', '수', '목', '금', '토']
 export function Confirmation() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [copied, setCopied] = useState(false)
+  const [shareResult, setShareResult] = useState<'shared' | 'copied' | null>(null)
+  const canShare = typeof (navigator as Navigator & { share?: unknown }).share === 'function'
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const meeting = id ? getMeeting(id) : null
 
@@ -53,10 +55,10 @@ export function Confirmation() {
     return lines.join('\n')
   }
 
-  function handleCopy() {
-    navigator.clipboard.writeText(buildSlackMessage()).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+  function handleShare() {
+    shareOrCopy(buildSlackMessage(), `${window.location.origin}/meeting/${id}/respond`).then(res => {
+      setShareResult(res)
+      setTimeout(() => setShareResult(null), 2000)
     })
   }
 
@@ -102,8 +104,10 @@ export function Confirmation() {
       </div>
 
       {/* 슬랙 공유 버튼 */}
-      <button className={styles.slackBtn} onClick={handleCopy}>
-        {copied ? <><Icon name="check" size={16} /> 복사됐어요!</> : <><Icon name="clipboard" size={16} /> 슬랙에 공유할 메시지 복사</>}
+      <button className={styles.slackBtn} onClick={handleShare}>
+        {shareResult === 'copied' ? <><Icon name="check" size={16} /> 복사됐어요!</>
+          : shareResult === 'shared' ? <><Icon name="check" size={16} /> 공유했어요!</>
+          : <><Icon name={canShare ? 'message' : 'clipboard'} size={16} /> {canShare ? '결과 공유하기' : '슬랙에 공유할 메시지 복사'}</>}
       </button>
 
       <button
