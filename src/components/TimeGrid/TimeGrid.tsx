@@ -267,7 +267,6 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                   const t = 0.16 + 0.6 * Math.min(1, others / othersTotal)
                   cellBg = `rgba(8,181,160,${t.toFixed(2)})`
                 } else cellBg = '#eef1f5'
-                const showCount = others > 0 && !mine && !highlighted && !inactive
                 const interactive = !readOnly && !inactive
                 return (
                   <div
@@ -280,9 +279,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                     onMouseDown={interactive ? e => handleMouseDown(e, date, idx) : undefined}
                     onMouseEnter={interactive ? () => handleMouseEnter(date, idx) : undefined}
                     onTouchStart={interactive ? () => handleStart(date, idx) : undefined}
-                  >
-                    {showCount && <span className={styles.cellCount}>{others}</span>}
-                  </div>
+                  />
                 )
               })}
             </div>
