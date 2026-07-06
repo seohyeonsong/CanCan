@@ -78,6 +78,20 @@ export function MyMeetings() {
       </header>
 
       <div className={styles.content}>
+        {/* 프로세스 안내 — 맨 위 */}
+        <section className={styles.flowSection}>
+          <h3 className={styles.flowHeading}>CanCan은 이렇게 진행돼요</h3>
+          <ol className={styles.flowStrip}>
+            {FLOW_STEPS.map((s, i) => (
+              <li key={i} className={styles.flowStep}>
+                <span className={styles.flowStepIcon}>{s.icon}</span>
+                <span className={styles.flowStepLabel}>{s.title}</span>
+                {i < FLOW_STEPS.length - 1 && <span className={styles.flowArrow}>›</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+
         {/* 진입 카드 */}
         <div className={styles.entryRow}>
           <button className={`${styles.entryCard} ${styles.entryCreate}`} onClick={() => navigate('/create')}>
@@ -105,17 +119,6 @@ export function MyMeetings() {
             <button className={styles.joinBtn} onClick={handleJoin}>참여</button>
           </div>
         )}
-
-        {/* 흐름 한 줄 안내 */}
-        <ol className={styles.flowStrip}>
-          {FLOW_STEPS.map((s, i) => (
-            <li key={i} className={styles.flowChip}>
-              <span className={styles.flowChipIcon}>{s.icon}</span>
-              <span className={styles.flowChipLabel}>{s.title}</span>
-              {i < FLOW_STEPS.length - 1 && <span className={styles.flowArrow}>›</span>}
-            </li>
-          ))}
-        </ol>
 
         {myMeetings.length > 0 && (
           <section className={styles.section}>
