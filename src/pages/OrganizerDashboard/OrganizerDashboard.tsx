@@ -167,6 +167,7 @@ export function OrganizerDashboard() {
 
       {/* 헤더 */}
       <header className={styles.header}>
+        <button className={styles.backBtn} onClick={() => navigate('/meetings')}>‹ 회의 목록</button>
         <div className={styles.meetingMeta}>
           <h2 className={styles.meetingTitle}>
             {meeting.title}
