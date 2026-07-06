@@ -107,7 +107,7 @@ export function CreateMeeting() {
             <input
               className={`${styles.input} ${errors.organizerName ? styles.inputError : ''}`}
               type="text"
-              placeholder="홍길동"
+              placeholder="송서현"
               value={organizerName}
               onChange={e => { setOrganizerName(e.target.value); setErrors(p => ({...p, organizerName: ''})) }}
             />
@@ -207,7 +207,7 @@ export function CreateMeeting() {
               <input
                 className={styles.input}
                 type="text"
-                placeholder="이름"
+                placeholder="이름 (예: 송서현A)"
                 value={newName}
                 onChange={e => setNewName(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addParticipant() } }}

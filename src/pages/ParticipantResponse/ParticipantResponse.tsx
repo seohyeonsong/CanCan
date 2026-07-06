@@ -211,17 +211,17 @@ export function ParticipantResponse() {
               <input
                 className={styles.nameInput}
                 type="text"
-                placeholder="홍길동 A"
+                placeholder="송서현A"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && name.trim() && !nameClash && setStep('grid')}
               />
               {nameClash ? (
                 <p className={styles.nameError}>
-                  <Icon name="x" size={13} /> 이미 <b>{name.trim()}</b>님이 응답했어요. 본인이면 위 <b>‘응답 수정’</b>을 누르고, 다른 사람이면 <b>{name.trim()} B</b>처럼 구분해 주세요.
+                  <Icon name="x" size={13} /> 이미 <b>{name.trim()}</b>님이 응답했어요. 본인이면 위 <b>‘응답 수정’</b>을 누르고, 다른 사람이면 <b>{name.trim()}B</b>처럼 구분해 주세요.
                 </p>
               ) : (
-                <p className={styles.nameHint}><Icon name="bulb" size={13} /> 동명이인이 있다면 <b>홍길동 A</b>처럼 구분 표시를 꼭 붙여주세요</p>
+                <p className={styles.nameHint}><Icon name="bulb" size={13} /> 동명이인이 있다면 <b>송서현A</b>처럼 구분 표시를 꼭 붙여주세요</p>
               )}
             </div>
             <div className={styles.nameFieldGroup}>

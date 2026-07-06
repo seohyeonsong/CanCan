@@ -296,7 +296,7 @@ export function OrganizerDashboard() {
                 <div className={styles.addForm}>
                   <input
                     className={styles.addInput}
-                    placeholder="이름 (예: 홍길동 A)"
+                    placeholder="이름 (예: 송서현A)"
                     value={newName}
                     autoFocus
                     onChange={e => setNewName(e.target.value)}

@@ -28,7 +28,7 @@ function localDateStr(d: Date): string {
 }
 
 // 시드 데이터 스키마 버전 — 응답 모델이 바뀌면 올려서 기존 브라우저도 갱신
-const SEED_VERSION = '2'
+const SEED_VERSION = '3'
 
 // 심사/데모용: 응답이 모두 모인 현실적인 회의를 1개 시딩한다.
 // 날짜는 접속 시점 기준으로 생성해 항상 "다가오는 회의"로 보이게 한다.
@@ -64,7 +64,7 @@ export function seedDemoMeeting(ownerEmail: string): string {
   const participants: Meeting['participants'] = [
     {
       // 지훈 (필수·온라인) — 오후 위주로 가능
-      name: '지훈', isRequired: true, formatPreference: 'online',
+      name: '김지훈', isRequired: true, formatPreference: 'online',
       preferences: marks([
         [d1, 10, 0, 'okay'], [d1, 10, 30, 'okay'],
         [d1, 14, 0, 'good'], [d1, 14, 30, 'good'], [d1, 15, 0, 'good'], [d1, 15, 30, 'good'],
@@ -76,7 +76,7 @@ export function seedDemoMeeting(ownerEmail: string): string {
     },
     {
       // 민아 (필수·오프라인) — 지훈과 d1 오후·d2 14시·d3 11시만 겹침
-      name: '민아', isRequired: true, formatPreference: 'offline',
+      name: '이민아', isRequired: true, formatPreference: 'offline',
       preferences: marks([
         [d1, 14, 0, 'good'], [d1, 14, 30, 'good'], [d1, 15, 0, 'okay'], [d1, 15, 30, 'okay'],
         [d2, 10, 0, 'good'], [d2, 10, 30, 'good'],
@@ -87,7 +87,7 @@ export function seedDemoMeeting(ownerEmail: string): string {
     },
     {
       // 수빈 (선택·모두 가능)
-      name: '수빈', isRequired: false, formatPreference: 'both',
+      name: '박수빈', isRequired: false, formatPreference: 'both',
       preferences: marks([
         [d1, 9, 0, 'okay'], [d1, 9, 30, 'okay'],
         [d1, 14, 0, 'good'], [d1, 14, 30, 'good'],
@@ -98,7 +98,7 @@ export function seedDemoMeeting(ownerEmail: string): string {
     },
     {
       // 태호 (선택·온라인) — d2 14시는 조율 가능
-      name: '태호', isRequired: false, formatPreference: 'online',
+      name: '정태호', isRequired: false, formatPreference: 'online',
       preferences: marks([
         [d1, 14, 0, 'okay'], [d1, 14, 30, 'okay'],
         [d1, 15, 0, 'good'], [d1, 15, 30, 'good'],
