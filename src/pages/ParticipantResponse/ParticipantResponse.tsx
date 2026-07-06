@@ -7,6 +7,7 @@ import { getDateRange } from '../../lib/algorithm'
 import type { Preference, Meeting, ParticipantResponse as ParticipantResponseType } from '../../types'
 import { getUser } from '../../lib/auth'
 import { Logo } from '../../components/Logo/Logo'
+import { Icon, formatMeta } from '../../components/Icon/Icon'
 import styles from './ParticipantResponse.module.css'
 
 type Step = 'name' | 'grid' | 'done' | 'pending'
@@ -60,7 +61,7 @@ export function ParticipantResponse() {
               {meeting.organizerName} · {meeting.durationMinutes}분
               {meeting.format && (
                 <span style={{ marginLeft: 6 }}>
-                  · {meeting.format === 'online' ? '💻 온라인' : meeting.format === 'offline' ? '📍 오프라인' : '🔀 온·오프라인'}
+                  · <Icon name={formatMeta(meeting.format)!.icon} size={13} /> {formatMeta(meeting.format)!.label}
                   {meeting.location && ` (${meeting.location})`}
                 </span>
               )}
@@ -70,7 +71,7 @@ export function ParticipantResponse() {
             className={styles.primaryBtn}
             onClick={() => { const u = buildGoogleCalendarUrl(meeting); if (u) window.open(u, '_blank') }}
           >
-            📅 캘린더에 추가하기
+            <Icon name="calendarPlus" size={17} /> 캘린더에 추가하기
           </button>
         </div>
       </div>
@@ -123,9 +124,9 @@ export function ParticipantResponse() {
         <h2 className={styles.contextTitle}>{meeting.title}</h2>
         <p className={styles.contextMeta}>
           {meeting.organizerName} · {fmtDate(meeting.dateRange.start)} ~ {fmtDate(meeting.dateRange.end)} · {meeting.durationMinutes}분
-          {meeting.format && (
+          {formatMeta(meeting.format) && (
             <span style={{ marginLeft: 6 }}>
-              · {meeting.format === 'online' ? '💻 온라인' : meeting.format === 'offline' ? '📍 오프라인' : '🔀 온·오프라인'}
+              · <Icon name={formatMeta(meeting.format)!.icon} size={13} /> {formatMeta(meeting.format)!.label}
               {meeting.location && ` (${meeting.location})`}
             </span>
           )}
@@ -207,7 +208,7 @@ export function ParticipantResponse() {
                 onChange={e => setName(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && name.trim() && setStep('grid')}
               />
-              <p className={styles.nameHint}>💡 동명이인이 있다면 <b>홍길동 A</b>처럼 구분 표시를 꼭 붙여주세요</p>
+              <p className={styles.nameHint}><Icon name="bulb" size={13} /> 동명이인이 있다면 <b>홍길동 A</b>처럼 구분 표시를 꼭 붙여주세요</p>
             </div>
             <div className={styles.nameFieldGroup}>
               <label className={styles.nameLabel}>연락처 <span className={styles.optionalLabel}>(선택)</span></label>
@@ -245,14 +246,14 @@ export function ParticipantResponse() {
 
             {meeting && name && isEditingExisting(meeting, name) ? (
               <div className={styles.editBanner}>
-                <span>✏️</span>
+                <span className={styles.firstBannerIcon}><Icon name="pencil" size={15} /></span>
                 <p>{name}님의 기존 응답을 수정하고 있어요. 완료 후 제출하기를 눌러주세요.</p>
               </div>
             ) : isFirstParticipant ? (
               <>
                 <h3 className={styles.stepTitle}>가능한 시간을 최대한 많이 표시해주세요</h3>
                 <div className={styles.firstBanner}>
-                  <span className={styles.firstBannerIcon}>🥇</span>
+                  <span className={styles.firstBannerIcon}><Icon name="flag" size={15} /></span>
                   <p>첫 번째 응답이에요! 많이 표시할수록 시간 맞추기가 쉬워져요</p>
                 </div>
               </>
@@ -272,17 +273,17 @@ export function ParticipantResponse() {
               <p className={styles.formatPickLabel}>어떻게 참여하실 예정인가요?</p>
               <div className={styles.formatPickRow}>
                 {([
-                  { value: 'online', icon: '💻', label: '온라인' },
-                  { value: 'offline', icon: '🏢', label: '오프라인' },
-                  { value: 'both', icon: '✌️', label: '모두 가능' },
-                ] as { value: 'online' | 'offline' | 'both'; icon: string; label: string }[]).map(opt => (
+                  { value: 'online', icon: 'monitor', label: '온라인' },
+                  { value: 'offline', icon: 'pin', label: '오프라인' },
+                  { value: 'both', icon: 'shuffle', label: '모두 가능' },
+                ] as { value: 'online' | 'offline' | 'both'; icon: 'monitor' | 'pin' | 'shuffle'; label: string }[]).map(opt => (
                   <button
                     key={opt.value}
                     type="button"
                     className={`${styles.formatPickBtn} ${formatPreference === opt.value ? styles.formatPickBtnActive : ''}`}
                     onClick={() => setFormatPreference(opt.value)}
                   >
-                    <span style={{ fontSize: 18 }}>{opt.icon}</span>
+                    <span style={{ display: 'flex' }}><Icon name={opt.icon} size={18} /></span>
                     <span>{opt.label}</span>
                   </button>
                 ))}

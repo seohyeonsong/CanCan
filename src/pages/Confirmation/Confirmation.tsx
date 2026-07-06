@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting, unconfirmMeeting } from '../../lib/store'
 import { buildGoogleCalendarUrl } from '../../lib/calendarLink'
 import { Logo } from '../../components/Logo/Logo'
+import { Icon, formatMeta } from '../../components/Icon/Icon'
 import styles from './Confirmation.module.css'
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
@@ -82,7 +83,10 @@ export function Confirmation() {
           <p className={styles.timeRange}>
             {ampm} {displayHour}시{minStr} — {endAmpm} {displayEndHour}시{endMinStr}
           </p>
-          <p className={styles.duration}>{meeting.durationMinutes}분{formatStr ? ` · ${formatStr}` : ''}</p>
+          <p className={styles.duration}>
+            {meeting.durationMinutes}분
+            {formatMeta(meeting.format) && <> · <Icon name={formatMeta(meeting.format)!.icon} size={13} /> {formatMeta(meeting.format)!.label}{meeting.location ? ` (${meeting.location})` : ''}</>}
+          </p>
         </div>
 
         {meeting.participants.length > 0 && (
@@ -99,14 +103,14 @@ export function Confirmation() {
 
       {/* 슬랙 공유 버튼 */}
       <button className={styles.slackBtn} onClick={handleCopy}>
-        {copied ? '✓ 복사됐어요!' : '📋 슬랙에 공유할 메시지 복사'}
+        {copied ? <><Icon name="check" size={16} /> 복사됐어요!</> : <><Icon name="clipboard" size={16} /> 슬랙에 공유할 메시지 복사</>}
       </button>
 
       <button
         className={styles.calBtn}
         onClick={() => { const u = buildGoogleCalendarUrl(meeting); if (u) window.open(u, '_blank') }}
       >
-        📅 캘린더에 추가하기
+        <Icon name="calendarPlus" size={16} /> 캘린더에 추가하기
       </button>
 
       <button className={styles.newBtn} onClick={() => navigate('/meetings')}>

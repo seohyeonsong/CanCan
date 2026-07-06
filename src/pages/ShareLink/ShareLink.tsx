@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting } from '../../lib/store'
 import { Logo } from '../../components/Logo/Logo'
+import { Icon } from '../../components/Icon/Icon'
 import styles from './ShareLink.module.css'
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
@@ -103,12 +104,12 @@ export function ShareLink() {
         <div className={styles.linkBox}>
           <span className={styles.linkText}>{respondUrl}</span>
           <button className={`${styles.copyBtn} ${copied ? styles.copyBtnDone : ''}`} onClick={copyLink}>
-            {copied ? '복사됨 ✓' : '복사'}
+            {copied ? <><Icon name="check" size={13} /> 복사됨</> : '복사'}
           </button>
         </div>
 
         <button className={styles.slackBtn} onClick={copyMessage}>
-          {msgCopied ? '✓ 메시지가 복사됐어요!' : '💬 슬랙 초대 메시지 복사'}
+          {msgCopied ? <><Icon name="check" size={16} /> 메시지가 복사됐어요!</> : <><Icon name="message" size={16} /> 슬랙 초대 메시지 복사</>}
         </button>
 
         <p className={styles.hint}>슬랙이나 카카오톡에 붙여넣으면 끝!<br />링크를 받은 사람이 직접 시간을 입력해요.</p>

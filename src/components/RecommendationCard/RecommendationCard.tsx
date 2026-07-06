@@ -1,5 +1,6 @@
 import type { Recommendation } from '../../types'
 import { Badge } from '../Badge/Badge'
+import { Icon } from '../Icon/Icon'
 import styles from './RecommendationCard.module.css'
 
 interface RecommendationCardProps {
@@ -63,8 +64,8 @@ export function RecommendationCard({ recommendation, rank, onConfirm, isSelected
                 return (
                   <span key={n} className={`${styles.nameChip} ${styles.nameChipOk}`}>
                     {n}
-                    {isOnlineOnly && <span className={styles.formatTag}>💻</span>}
-                    {isOfflineOnly && <span className={styles.formatTag}>📍</span>}
+                    {isOnlineOnly && <span className={styles.formatTag}><Icon name="monitor" size={12} /></span>}
+                    {isOfflineOnly && <span className={styles.formatTag}><Icon name="pin" size={12} /></span>}
                   </span>
                 )
               })}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import type { Preference } from '../../types'
+import { Icon, type IconName } from '../Icon/Icon'
 import styles from './TimeGrid.module.css'
 
 interface TimeGridProps {
@@ -65,11 +66,11 @@ const PREF_LABELS: Record<Preference, string> = {
   no:       '안 돼요',
 }
 
-const PREF_ICONS: Record<Preference, string> = {
-  good:     '👍',
-  okay:     '🙂',
-  flexible: '🔄',
-  no:       '✕',
+const PREF_ICONS: Record<Preference, IconName> = {
+  good:     'thumbsup',
+  okay:     'smile',
+  flexible: 'refresh',
+  no:       'x',
 }
 
 export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKeys, readOnly = false, othersCount, othersTotal = 0 }: TimeGridProps) {
@@ -244,10 +245,10 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
               <div className={styles.dateHeader}>{formatDate(date)}</div>
               {SLOT_ITEMS.map((s, itemIdx) => {
                 if (s.type === 'lunch') {
-                  return <div key={`lunch-${itemIdx}`} className={styles.lunchBreak}>🍱 점심</div>
+                  return <div key={`lunch-${itemIdx}`} className={styles.lunchBreak}><Icon name="utensils" size={13} /> 점심</div>
                 }
                 if (s.type === 'evening') {
-                  return <div key={`evening-${itemIdx}`} className={styles.eveningBreak}>🌙 퇴근 이후</div>
+                  return <div key={`evening-${itemIdx}`} className={styles.eveningBreak}><Icon name="moon" size={13} /> 퇴근 이후</div>
                 }
                 const idx = slotIdx++
                 const key = slotKey(date, s.hour, s.minute)
@@ -316,7 +317,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
               }}
               onClick={() => applyPref(p)}
             >
-              <span className={styles.tooltipIcon}>{PREF_ICONS[p]}</span>
+              <span className={styles.tooltipIcon}><Icon name={PREF_ICONS[p]} size={15} /></span>
               <span className={styles.tooltipLabel}>{PREF_LABELS[p]}</span>
             </button>
           ))}

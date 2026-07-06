@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createMeeting } from '../../lib/store'
 import { getUser } from '../../lib/auth'
+import { Icon, type IconName } from '../../components/Icon/Icon'
 import type { MeetingFormat } from '../../types'
 import styles from './CreateMeeting.module.css'
 
@@ -167,17 +168,17 @@ export function CreateMeeting() {
             <label className={styles.label}>진행 방식</label>
             <div className={styles.segmented}>
               {([
-                { value: 'online', label: '💻 온라인' },
-                { value: 'offline', label: '📍 오프라인' },
-                { value: 'both', label: '🔀 둘 다 가능' },
-              ] as { value: MeetingFormat; label: string }[]).map(opt => (
+                { value: 'online', icon: 'monitor', label: '온라인' },
+                { value: 'offline', icon: 'pin', label: '오프라인' },
+                { value: 'both', icon: 'shuffle', label: '둘 다 가능' },
+              ] as { value: MeetingFormat; icon: IconName; label: string }[]).map(opt => (
                 <button
                   key={opt.value}
                   type="button"
                   className={`${styles.segmentBtn} ${format === opt.value ? styles.segmentActive : ''}`}
                   onClick={() => setFormat(opt.value)}
                 >
-                  {opt.label}
+                  <Icon name={opt.icon} size={15} /> {opt.label}
                 </button>
               ))}
             </div>

@@ -6,6 +6,7 @@ import { getRecommendations, getDateRange } from '../../lib/algorithm'
 import { RecommendationCard } from '../../components/RecommendationCard/RecommendationCard'
 import { CanIcon } from '../../components/CanIcon/CanIcon'
 import { Logo } from '../../components/Logo/Logo'
+import { Icon, formatMeta, type IconName } from '../../components/Icon/Icon'
 import { TimeGrid } from '../../components/TimeGrid/TimeGrid'
 import type { Meeting, Recommendation, Preference, MeetingFormat } from '../../types'
 import styles from './OrganizerDashboard.module.css'
@@ -146,9 +147,9 @@ export function OrganizerDashboard() {
           </h2>
           <p className={styles.meta}>
             {formatDate(meeting.dateRange.start)} ~ {formatDate(meeting.dateRange.end)} · {meeting.durationMinutes}분
-            {meeting.format && (
+            {formatMeta(meeting.format) && (
               <span style={{ marginLeft: 6 }}>
-                · {meeting.format === 'online' ? '💻 온라인' : meeting.format === 'offline' ? '📍 오프라인' : '🔀 온·오프라인'}
+                · <Icon name={formatMeta(meeting.format)!.icon} size={13} /> {formatMeta(meeting.format)!.label}
                 {meeting.location && ` (${meeting.location})`}
               </span>
             )}
@@ -187,7 +188,7 @@ export function OrganizerDashboard() {
           onClick={() => setTab('respond')}
         >
           내 응답하기
-          {submitted && <span className={styles.tabCheck}>✓</span>}
+          {submitted && <span className={styles.tabCheck}><Icon name="check" size={13} /></span>}
         </button>
       </div>
 
@@ -227,7 +228,7 @@ export function OrganizerDashboard() {
                         <div className={styles.participantPopup}>
                           <span className={styles.popupName}>{p.name}</span>
                           {p.contact && <span className={styles.popupContact}>{p.contact}</span>}
-                          <span className={styles.popupStatus}>{p.submittedAt ? '✓ 응답 완료' : '응답 대기'}</span>
+                          <span className={styles.popupStatus}>{p.submittedAt ? <><Icon name="check" size={12} /> 응답 완료</> : '응답 대기'}</span>
                           <button
                             className={styles.popupRemove}
                             onClick={(e) => {
@@ -299,17 +300,17 @@ export function OrganizerDashboard() {
                         <label className={styles.confirmLabel}>진행 방식</label>
                         <div className={styles.confirmSegmented}>
                           {([
-                            { value: 'online', label: '💻 온라인' },
-                            { value: 'offline', label: '🏢 오프라인' },
-                            { value: 'both', label: '🔀 온·오프라인' },
-                          ] as { value: MeetingFormat; label: string }[]).map(opt => (
+                            { value: 'online', icon: 'monitor', label: '온라인' },
+                            { value: 'offline', icon: 'pin', label: '오프라인' },
+                            { value: 'both', icon: 'shuffle', label: '온·오프라인' },
+                          ] as { value: MeetingFormat; icon: IconName; label: string }[]).map(opt => (
                             <button
                               key={opt.value}
                               type="button"
                               className={`${styles.confirmSegBtn} ${confirmFormat === opt.value ? styles.confirmSegActive : ''}`}
                               onClick={() => setConfirmFormat(opt.value)}
                             >
-                              {opt.label}
+                              <Icon name={opt.icon} size={14} /> {opt.label}
                             </button>
                           ))}
                         </div>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getUser, clearUser } from '../../lib/auth'
 import { getMyMeetings } from '../../lib/store'
 import { Logo } from '../../components/Logo/Logo'
+import { Icon } from '../../components/Icon/Icon'
 import type { Meeting } from '../../types'
 import styles from './MyMeetings.module.css'
 
@@ -31,28 +32,12 @@ function formatConfirmed(slot: { date: string; hour: number; minute: number }) {
   return `${d.getMonth()+1}/${d.getDate()}(${DAYS[d.getDay()]}) ${ampm} ${h}시${min}`
 }
 
-function Icon({ name }: { name: string }) {
-  const common = {
-    width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none',
-    stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const,
-  }
-  switch (name) {
-    case 'link': return <svg {...common}><path d="M9.5 14.5l5-5"/><path d="M11 6.5l1-1a3.5 3.5 0 015 5l-1 1"/><path d="M13 17.5l-1 1a3.5 3.5 0 01-5-5l1-1"/></svg>
-    case 'calendar': return <svg {...common}><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/><path d="M8.5 14l2 2 3.5-3.5"/></svg>
-    case 'sparkle': return <svg width={22} height={22} viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l1.6 5.2a2 2 0 001.2 1.2L20 11l-5.2 1.6a2 2 0 00-1.2 1.2L12 19l-1.6-5.2a2 2 0 00-1.2-1.2L4 11l5.2-1.6a2 2 0 001.2-1.2z"/></svg>
-    case 'send': return <svg {...common}><path d="M20 4L10.5 13.5"/><path d="M20 4l-6 16-3.5-7.5L3 9z"/></svg>
-    case 'plus': return <svg {...common}><path d="M12 5v14M5 12h14"/></svg>
-    case 'enter': return <svg {...common}><path d="M14 4h4a2 2 0 012 2v12a2 2 0 01-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>
-    default: return null
-  }
-}
-
 const FLOW_STEPS = [
   { icon: 'link', title: '링크 생성' },
   { icon: 'calendar', title: '시간 응답' },
   { icon: 'sparkle', title: 'AI 추천' },
   { icon: 'send', title: '확정·공유' },
-]
+] as const
 
 export function MyMeetings() {
   const navigate = useNavigate()
@@ -100,7 +85,7 @@ export function MyMeetings() {
           <ol className={styles.flowStrip}>
             {FLOW_STEPS.map((s, i) => (
               <li key={i} className={styles.flowStep}>
-                <span className={styles.flowStepIcon}><Icon name={s.icon} /></span>
+                <span className={styles.flowStepIcon}><Icon name={s.icon} size={22} /></span>
                 <span className={styles.flowStepLabel}>{s.title}</span>
                 {i < FLOW_STEPS.length - 1 && <span className={styles.flowArrow}>›</span>}
               </li>
@@ -111,12 +96,12 @@ export function MyMeetings() {
         {/* 진입 카드 */}
         <div className={styles.entryRow}>
           <button className={`${styles.entryCard} ${styles.entryCreate}`} onClick={() => navigate('/create')}>
-            <span className={styles.entryIcon}><Icon name="plus" /></span>
+            <span className={styles.entryIcon}><Icon name="plus" size={20} /></span>
             <span className={styles.entryTitle}>회의 만들기</span>
             <span className={styles.entryDesc}>새 회의 링크를 만들어요</span>
           </button>
           <button className={styles.entryCard} onClick={() => setJoinOpen(o => !o)}>
-            <span className={styles.entryIcon}><Icon name="enter" /></span>
+            <span className={styles.entryIcon}><Icon name="enter" size={20} /></span>
             <span className={styles.entryTitle}>링크로 참여하기</span>
             <span className={styles.entryDesc}>받은 링크로 시간 응답</span>
           </button>
@@ -201,7 +186,7 @@ function MeetingCard({ meeting: m, isOwner, responded, onClick }: {
       </p>
 
       {m.confirmedSlot ? (
-        <p className={styles.confirmedLine}>🗓️ {formatConfirmed(m.confirmedSlot)}</p>
+        <p className={styles.confirmedLine}><Icon name="calendar" size={15} /> {formatConfirmed(m.confirmedSlot)}</p>
       ) : total > 0 ? (
         <div className={styles.progressWrap}>
           <div className={styles.progressTrack}>
