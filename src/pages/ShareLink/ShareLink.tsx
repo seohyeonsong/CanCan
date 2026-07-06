@@ -21,20 +21,60 @@ function formatDeadline(deadline: string): string {
   return `${label}까지 · D-${diff}`
 }
 
+// clipboard API가 막힌 환경(비 https 등)에서도 동작하는 복사 헬퍼
+function copyText(text: string): Promise<void> {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text))
+  }
+  return fallbackCopy(text)
+}
+function fallbackCopy(text: string): Promise<void> {
+  return new Promise(resolve => {
+    const ta = document.createElement('textarea')
+    ta.value = text
+    ta.style.position = 'fixed'
+    ta.style.opacity = '0'
+    document.body.appendChild(ta)
+    ta.select()
+    try { document.execCommand('copy') } catch { /* noop */ }
+    document.body.removeChild(ta)
+    resolve()
+  })
+}
+
 export function ShareLink() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const meeting = id ? getMeeting(id) : null
   const [copied, setCopied] = useState(false)
+  const [msgCopied, setMsgCopied] = useState(false)
 
   if (!meeting) return <div className={styles.error}>회의를 찾을 수 없어요</div>
 
   const respondUrl = `${window.location.origin}/meeting/${id}/respond`
 
+  function buildInviteMessage() {
+    const m = meeting!
+    const lines = [
+      `📅 *${m.title}* 시간을 맞춰요!`,
+      `🗓 ${formatDate(m.dateRange.start)} ~ ${formatDate(m.dateRange.end)} · ${m.durationMinutes}분`,
+    ]
+    if (m.responseDeadline) lines.push(`⏰ 응답 마감: ${formatDeadline(m.responseDeadline)}`)
+    lines.push('', '아래 링크에서 가능한 시간을 표시해주세요 👇', respondUrl)
+    return lines.join('\n')
+  }
+
   function copyLink() {
-    navigator.clipboard.writeText(respondUrl).then(() => {
+    copyText(respondUrl).then(() => {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  function copyMessage() {
+    copyText(buildInviteMessage()).then(() => {
+      setMsgCopied(true)
+      setTimeout(() => setMsgCopied(false), 2000)
     })
   }
 
@@ -67,7 +107,11 @@ export function ShareLink() {
           </button>
         </div>
 
-        <p className={styles.hint}>슬랙이나 카카오톡으로 공유해주세요.<br />링크를 받은 사람이 직접 시간을 입력해요.</p>
+        <button className={styles.slackBtn} onClick={copyMessage}>
+          {msgCopied ? '✓ 메시지가 복사됐어요!' : '💬 슬랙 초대 메시지 복사'}
+        </button>
+
+        <p className={styles.hint}>슬랙이나 카카오톡에 붙여넣으면 끝!<br />링크를 받은 사람이 직접 시간을 입력해요.</p>
       </div>
 
       <button className={styles.dashboardBtn} onClick={() => navigate(`/meeting/${id}/dashboard`)}>

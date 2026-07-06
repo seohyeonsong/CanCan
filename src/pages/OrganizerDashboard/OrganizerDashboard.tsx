@@ -41,6 +41,9 @@ export function OrganizerDashboard() {
   const [pendingRec, setPendingRec] = useState<Recommendation | null>(null)
   const [confirmFormat, setConfirmFormat] = useState<MeetingFormat>('online')
   const [confirmLocation, setConfirmLocation] = useState('')
+  const [showAdd, setShowAdd] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [newRequired, setNewRequired] = useState(true)
 
   function refresh() {
     if (!id) return
@@ -74,6 +77,24 @@ export function OrganizerDashboard() {
   const pending = meeting.participants.filter(p => p.submittedAt === null)
   const respondUrl = `${window.location.origin}/meeting/${id}/respond`
   const dates = getDateRange(meeting.dateRange.start, meeting.dateRange.end)
+
+  // 주최자 응답 그리드에도 다른 참여자 가능 시간을 히트맵으로 겹쳐 보여준다
+  const orgOthers = meeting.participants.filter(p => p.submittedAt && p.name !== meeting.organizerName)
+  const orgOthersTotal = orgOthers.length
+  const orgOthersCount: Record<string, number> = {}
+  for (const p of orgOthers) {
+    for (const [key, pref] of Object.entries(p.preferences)) {
+      if (pref !== 'no') orgOthersCount[key] = (orgOthersCount[key] ?? 0) + 1
+    }
+  }
+
+  function handleAddParticipant() {
+    if (!id || !newName.trim()) return
+    addParticipant(id, newName.trim(), newRequired)
+    setNewName('')
+    setShowAdd(false)
+    refresh()
+  }
 
   function handleConfirm(rec: Recommendation) {
     setConfirmFormat(meeting?.format ?? 'online')
@@ -237,6 +258,30 @@ export function OrganizerDashboard() {
                 </>
               )}
             </div>
+
+            {/* 참여자 추가 */}
+            <div className={styles.addPanel}>
+              {!showAdd ? (
+                <button className={styles.addToggle} onClick={() => setShowAdd(true)}>+ 참여자 추가</button>
+              ) : (
+                <div className={styles.addForm}>
+                  <input
+                    className={styles.addInput}
+                    placeholder="이름 (예: 홍길동 A)"
+                    value={newName}
+                    autoFocus
+                    onChange={e => setNewName(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleAddParticipant()}
+                  />
+                  <label className={styles.addReq}>
+                    <input type="checkbox" checked={newRequired} onChange={e => setNewRequired(e.target.checked)} />
+                    필수
+                  </label>
+                  <button className={styles.addConfirm} onClick={handleAddParticipant} disabled={!newName.trim()}>추가</button>
+                  <button className={styles.addCancel} onClick={() => { setShowAdd(false); setNewName('') }}>취소</button>
+                </div>
+              )}
+            </div>
           </section>
 
           {/* 추천 시간 */}
@@ -342,6 +387,8 @@ export function OrganizerDashboard() {
             dates={dates}
             preferences={preferences}
             onChange={(key, pref) => setPreferences(prev => ({ ...prev, [key]: pref }))}
+            othersCount={orgOthersTotal > 0 ? orgOthersCount : undefined}
+            othersTotal={orgOthersTotal}
           />
 
           <button
