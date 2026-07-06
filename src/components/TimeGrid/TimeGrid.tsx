@@ -215,7 +215,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
         </div>
         {othersCount && othersTotal > 0 && (
           <div className={styles.legendItem}>
-            <div className={styles.legendDot} style={{ background: '#fff', boxShadow: 'inset 0 0 0 2px rgba(8,181,160,0.7)' }} />
+            <div className={styles.legendDot} style={{ background: '#fff', boxShadow: 'inset 0 0 0 2px rgba(49,130,246,0.6)' }} />
             <span>테두리 진할수록 여러 명 가능</span>
           </div>
         )}
@@ -265,9 +265,9 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                 else if (highlighted) cellBg = 'rgba(49,130,246,0.35)'
                 else if (mine) cellBg = PREF_COLORS[pref as Preference]
                 else if (others > 0 && othersTotal > 0) {
-                  const t = 0.4 + 0.5 * Math.min(1, others / othersTotal)
+                  const t = 0.35 + 0.5 * Math.min(1, others / othersTotal)
                   cellBg = '#fff'
-                  cellShadow = `inset 0 0 0 1.5px rgba(8,181,160,${t.toFixed(2)})`
+                  cellShadow = `inset 0 0 0 1.5px rgba(49,130,246,${t.toFixed(2)})`
                 } else cellBg = '#eef1f5'
                 const interactive = !readOnly && !inactive
                 return (
