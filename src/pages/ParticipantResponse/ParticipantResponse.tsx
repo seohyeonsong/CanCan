@@ -93,6 +93,11 @@ export function ParticipantResponse() {
     }
   }
 
+  // 나 말고 모두 응답했다면, 아무도 안 되는 칸은 골라도 소용없으니 잠근다
+  const pendingOthers = meeting.participants.filter(p => p.name !== name.trim() && !p.submittedAt)
+  const allOthersResponded = othersTotal > 0 && pendingOthers.length === 0
+  const viableKeys = allOthersResponded ? new Set(Object.keys(othersCount)) : undefined
+
   // "표시 안 함 = 불가" 모델이라, 가능 시간이 0개면 제출을 막는다 (빈 응답이 추천을 오염시킴)
   const markedCount = Object.values(preferences).filter(p => p !== 'no').length
 
@@ -261,8 +266,10 @@ export function ParticipantResponse() {
               <>
                 <h3 className={styles.stepTitle}>가능한 시간을 표시해주세요</h3>
                 <div className={styles.narrowBanner}>
-                  <span>이미 {othersTotal}명이 응답했어요 · <b>진한 칸</b>일수록 여러 명이 가능해요</span>
-                  <span className={styles.narrowSub}>겹치는 시간에 맞추면 조율이 빨라져요</span>
+                  <span>이미 {othersTotal}명이 응답했어요 · <b>테두리</b>가 진할수록 여러 명이 가능해요</span>
+                  <span className={styles.narrowSub}>
+                    {allOthersResponded ? '회색 칸은 아무도 안 되는 시간이라 잠겨 있어요' : '겹치는 시간에 맞추면 조율이 빨라져요'}
+                  </span>
                 </div>
               </>
             )}
@@ -297,6 +304,7 @@ export function ParticipantResponse() {
             onChange={(key, pref) => setPreferences(prev => ({ ...prev, [key]: pref }))}
             othersCount={isFirstParticipant ? undefined : othersCount}
             othersTotal={othersTotal}
+            activeKeys={viableKeys}
           />
 
           <div className={styles.floatBar}>

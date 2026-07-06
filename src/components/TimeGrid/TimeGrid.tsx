@@ -215,8 +215,8 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
         </div>
         {othersCount && othersTotal > 0 && (
           <div className={styles.legendItem}>
-            <div className={styles.legendDot} style={{ background: 'rgba(8,181,160,0.6)' }} />
-            <span>진할수록 여러 명 가능</span>
+            <div className={styles.legendDot} style={{ background: '#fff', boxShadow: 'inset 0 0 0 2px rgba(8,181,160,0.7)' }} />
+            <span>테두리 진할수록 여러 명 가능</span>
           </div>
         )}
       </div>
@@ -258,14 +258,16 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                 const inactive = activeKeys !== undefined && !activeKeys.has(key)
                 const mine = !!pref && pref !== 'no'
                 const others = othersCount?.[key] ?? 0
-                // 내 선택 > 하이라이트 > 남들 히트맵(민트 농도) > 빈 칸
+                // 내 선택은 '채움', 남들 가능은 '스트로크(테두리)'로 구분
                 let cellBg: string | undefined
+                let cellShadow: string | undefined
                 if (inactive) cellBg = undefined
                 else if (highlighted) cellBg = 'rgba(49,130,246,0.35)'
                 else if (mine) cellBg = PREF_COLORS[pref as Preference]
                 else if (others > 0 && othersTotal > 0) {
-                  const t = 0.16 + 0.6 * Math.min(1, others / othersTotal)
-                  cellBg = `rgba(8,181,160,${t.toFixed(2)})`
+                  const t = 0.4 + 0.5 * Math.min(1, others / othersTotal)
+                  cellBg = '#fff'
+                  cellShadow = `inset 0 0 0 1.5px rgba(8,181,160,${t.toFixed(2)})`
                 } else cellBg = '#eef1f5'
                 const interactive = !readOnly && !inactive
                 return (
@@ -275,7 +277,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                     data-date={date}
                     data-idx={idx}
                     className={`${styles.cell} ${s.minute === 0 ? styles.cellHourBoundary : ''} ${fromCal ? styles.cellFromCal : ''} ${highlighted ? styles.cellHighlighted : ''} ${inactive ? styles.cellInactive : ''}`}
-                    style={{ background: cellBg, cursor: interactive ? 'pointer' : 'default' }}
+                    style={{ background: cellBg, boxShadow: cellShadow, cursor: interactive ? 'pointer' : 'default' }}
                     onMouseDown={interactive ? e => handleMouseDown(e, date, idx) : undefined}
                     onMouseEnter={interactive ? () => handleMouseEnter(date, idx) : undefined}
                     onTouchStart={interactive ? () => handleStart(date, idx) : undefined}
