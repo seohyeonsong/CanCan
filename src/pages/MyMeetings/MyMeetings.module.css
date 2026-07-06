@@ -129,20 +129,41 @@
 }
 
 .card {
+  position: relative;
   background: white;
-  border-radius: 14px;
-  padding: 16px 18px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border-radius: 16px;
+  padding: 16px 18px 16px 22px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   display: flex;
-  flex-direction: column;
-  gap: 6px;
   text-align: left;
   transition: box-shadow 150ms, transform 150ms;
   width: 100%;
+  overflow: hidden;
 }
 .card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(49,130,246,0.12);
+  transform: translateY(-2px);
+}
+.card:hover .cardArrow { color: var(--color-primary); transform: translateX(2px); }
+
+/* 상태 컬러 액센트 바 */
+.accent {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+.accentDefault { background: var(--color-primary); }
+.accentConfirmed { background: #16a34a; }
+.accentPending { background: #f97316; }
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 
 .cardMain {
@@ -173,6 +194,7 @@
   font-size: 20px;
   color: var(--color-grey-300);
   flex-shrink: 0;
+  transition: color 150ms, transform 150ms;
 }
 
 .cardMeta {
@@ -184,6 +206,57 @@
 }
 
 .deadline { color: #f59e0b; font-weight: 600; }
+
+/* 응답 진행 상황 */
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.progressLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-grey-500);
+}
+.progressDone { color: #16a34a; }
+
+/* 확정 시간 하이라이트 */
+.confirmedRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  padding: 7px 12px;
+  background: #f0fdf4;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #15803d;
+  align-self: flex-start;
+}
+.confirmedCheck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #16a34a;
+  color: #fff;
+  font-size: 10px;
+}
 
 .badgeOwner   { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: var(--color-primary-light); color: var(--color-primary); flex-shrink: 0; }
 .badgeConfirmed { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #f0fdf4; color: #16a34a; flex-shrink: 0; }

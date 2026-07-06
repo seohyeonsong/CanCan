@@ -22,6 +22,16 @@ function formatDeadline(deadline: string) {
   return `D-${diff}`
 }
 
+const DOT_COLORS = ['#3182f6', '#f97316', '#08b5a0', '#ec4899', '#8b5cf6', '#eab308']
+const DAYS = ['일', '월', '화', '수', '목', '금', '토']
+function formatConfirmed(slot: { date: string; hour: number; minute: number }) {
+  const d = new Date(slot.date + 'T00:00:00')
+  const ampm = slot.hour < 12 ? '오전' : '오후'
+  const h = slot.hour > 12 ? slot.hour - 12 : slot.hour
+  const min = slot.minute === 30 ? ' 30분' : ''
+  return `${d.getMonth()+1}/${d.getDate()}(${DAYS[d.getDay()]}) ${ampm} ${h}시${min}`
+}
+
 const FLOW_STEPS = [
   { icon: '🔗', title: '링크 생성' },
   { icon: '🗓️', title: '시간 응답' },
@@ -152,32 +162,68 @@ function MeetingCard({ meeting: m, isOwner, responded, onClick }: {
 }) {
   const respondedCount = m.participants.filter(p => p.submittedAt).length
   const total = m.participants.length
+  const allIn = total > 0 && respondedCount === total
+
+  const statusClass = m.confirmedSlot ? styles.accentConfirmed
+    : !isOwner && !responded ? styles.accentPending
+    : styles.accentDefault
 
   return (
     <button className={styles.card} onClick={onClick}>
-      <div className={styles.cardMain}>
-        <div className={styles.cardLeft}>
-          {m.confirmedSlot ? (
-            <span className={styles.badgeConfirmed}>확정</span>
-          ) : isOwner ? (
-            <span className={styles.badgeOwner}>주최</span>
-          ) : responded ? (
-            <span className={styles.badgeDone}>응답완료</span>
-          ) : (
-            <span className={styles.badgePending}>미응답</span>
-          )}
-          <span className={styles.cardTitle}>{m.title}</span>
-          {m.id === 'demo-kickoff' && <span className={styles.badgeDemo}>데모</span>}
+      <span className={`${styles.accent} ${statusClass}`} />
+      <div className={styles.cardBody}>
+        <div className={styles.cardMain}>
+          <div className={styles.cardLeft}>
+            {m.confirmedSlot ? (
+              <span className={styles.badgeConfirmed}>확정</span>
+            ) : isOwner ? (
+              <span className={styles.badgeOwner}>주최</span>
+            ) : responded ? (
+              <span className={styles.badgeDone}>응답완료</span>
+            ) : (
+              <span className={styles.badgePending}>미응답</span>
+            )}
+            <span className={styles.cardTitle}>{m.title}</span>
+            {m.id === 'demo-kickoff' && <span className={styles.badgeDemo}>데모</span>}
+          </div>
+          <span className={styles.cardArrow}>›</span>
         </div>
-        <span className={styles.cardArrow}>›</span>
-      </div>
-      <div className={styles.cardMeta}>
-        <span>{formatDateRange(m.dateRange.start, m.dateRange.end)}</span>
-        <span>·</span>
-        <span>{m.durationMinutes}분</span>
-        {isOwner && <><span>·</span><span>응답 {respondedCount}/{total}명</span></>}
-        {m.responseDeadline && (
-          <><span>·</span><span className={styles.deadline}>{formatDeadline(m.responseDeadline)}</span></>
+
+        <div className={styles.cardMeta}>
+          <span>{formatDateRange(m.dateRange.start, m.dateRange.end)}</span>
+          <span>·</span>
+          <span>{m.durationMinutes}분</span>
+          {m.responseDeadline && !m.confirmedSlot && (
+            <><span>·</span><span className={styles.deadline}>{formatDeadline(m.responseDeadline)}</span></>
+          )}
+        </div>
+
+        {m.confirmedSlot ? (
+          <div className={styles.confirmedRow}>
+            <span className={styles.confirmedCheck}>✓</span>
+            {formatConfirmed(m.confirmedSlot)} 확정
+          </div>
+        ) : total > 0 ? (
+          <div className={styles.progressRow}>
+            <div className={styles.dots}>
+              {m.participants.map((p, i) => (
+                <span
+                  key={p.name}
+                  className={styles.dot}
+                  style={p.submittedAt
+                    ? { background: DOT_COLORS[i % DOT_COLORS.length] }
+                    : { background: 'transparent', border: '1.5px solid var(--color-grey-300)' }}
+                />
+              ))}
+            </div>
+            <span className={`${styles.progressLabel} ${allIn ? styles.progressDone : ''}`}>
+              {allIn ? '전원 응답 완료' : `${respondedCount}/${total} 응답`}
+            </span>
+          </div>
+        ) : (
+          <div className={styles.progressRow}>
+            <span className={styles.progressLabel}>아직 참여자가 없어요 · 링크를 공유해보세요</span>
+          </div>
         )}
       </div>
     </button>
