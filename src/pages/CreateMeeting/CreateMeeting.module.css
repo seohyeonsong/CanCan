@@ -84,24 +84,32 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--color-grey-700);
+  transition: color 150ms;
 }
+/* 포커스된 필드의 라벨 강조 */
+.field:focus-within .label { color: var(--color-primary); }
 
 .input {
   width: 100%;
   box-sizing: border-box;
   min-width: 0;
-  padding: 13px 16px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-grey-200);
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--color-grey-200);
   font-size: 15px;
-  color: var(--color-grey-800);
-  background: rgba(0,23,51,0.02);
+  color: var(--color-grey-900);
+  background: var(--color-grey-50);
   outline: none;
-  transition: border-color var(--transition-fast);
+  transition: border-color 150ms, background 150ms, box-shadow 150ms;
   -webkit-appearance: none;
   appearance: none;
 }
-.input:focus { border-color: var(--color-primary); }
+.input:hover:not(:focus) { border-color: var(--color-grey-300); }
+.input:focus {
+  border-color: var(--color-primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(49,130,246,0.12);
+}
 .input::placeholder { color: var(--color-grey-400); }
 
 .segmented {
@@ -114,18 +122,20 @@
 
 .segmentBtn {
   flex: 1;
-  padding: 8px 4px;
+  padding: 9px 4px;
   font-size: 13px;
   font-weight: 600;
   color: var(--color-grey-500);
-  border-radius: 6px;
-  transition: all var(--transition-fast);
+  border-radius: 8px;
+  transition: color 150ms, background 150ms, box-shadow 150ms;
   white-space: nowrap;
 }
+.segmentBtn:hover:not(.segmentActive) { color: var(--color-grey-700); }
 
 .segmentActive {
   background: var(--color-white);
-  color: var(--color-grey-900);
+  color: var(--color-primary);
+  font-weight: 700;
   box-shadow: 0px 1px 3px rgba(0,0,0,0.1);
 }
 
@@ -144,8 +154,8 @@
 
 .requiredToggle {
   display: flex;
-  border: 1px solid var(--color-grey-200);
-  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-grey-200);
+  border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -169,18 +179,19 @@
 }
 
 .addBtn {
-  padding: 0 16px;
+  padding: 0 18px;
   height: 48px;
   background: var(--color-primary-light);
   color: var(--color-primary);
-  border-radius: var(--radius-sm);
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background var(--transition-fast);
+  transition: background 150ms, transform 100ms;
 }
-.addBtn:hover { background: #d0e8ff; }
+.addBtn:hover { background: var(--color-primary-200); }
+.addBtn:active { transform: scale(0.96); }
 
 .participantList {
   list-style: none;
@@ -256,11 +267,16 @@
   color: var(--color-white);
   border-radius: var(--radius-lg);
   font-size: 17px;
-  font-weight: 600;
-  transition: background var(--transition-fast);
+  font-weight: 700;
+  transition: background 150ms, transform 100ms;
 }
 .submitBtn:hover:not(:disabled) { background: var(--color-primary-hover); }
-.submitBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+.submitBtn:active:not(:disabled) { transform: scale(0.99); }
+.submitBtn:disabled {
+  background: var(--color-grey-200);
+  color: var(--color-grey-400);
+  cursor: not-allowed;
+}
 
 .inputError {
   border-color: #ef4444 !important;
