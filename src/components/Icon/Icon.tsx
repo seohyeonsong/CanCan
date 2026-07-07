@@ -22,7 +22,7 @@ export function Icon({ name, size = 16 }: { name: IconName; size?: number }) {
     case 'enter': return <svg {...s}><path d="M14 4h4a2 2 0 012 2v12a2 2 0 01-2 2h-4"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4"/></svg>
     case 'monitor': return <svg {...s}><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
     case 'pin': return <svg {...s}><path d="M12 21s6-5.3 6-10a6 6 0 10-12 0c0 4.7 6 10 6 10z"/><circle cx="12" cy="11" r="2.2"/></svg>
-    case 'shuffle': return <svg {...s}><path d="M17 4h4v4M21 4l-6 6M3 4h3l11 12h4M21 16v4h-4M8 8L3 20"/></svg>
+    case 'shuffle': return <svg {...s}><path d="M16 4h4v4"/><path d="M4 20 20 4"/><path d="M16 20h4v-4"/><path d="M14 14l6 6"/><path d="M4 4l5 5"/></svg>
     case 'check': return <svg {...s}><path d="M5 12.5l4.5 4.5L19 6.5"/></svg>
     case 'pencil': return <svg {...s}><path d="M4 20h4L18.5 9.5a2 2 0 00-2.83-2.83L5 17.5V20z"/><path d="M14 7l3 3"/></svg>
     case 'bulb': return <svg {...s}><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-3.5 10.9c.5.4.5 1.1.5 1.6h6c0-.5 0-1.2.5-1.6A6 6 0 0012 3z"/></svg>

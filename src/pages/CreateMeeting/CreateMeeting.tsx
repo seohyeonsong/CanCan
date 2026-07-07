@@ -36,6 +36,10 @@ export function CreateMeeting() {
   const [newIsRequired, setNewIsRequired] = useState(true)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
+  // 오늘(로컬) — 지난 날짜 선택 차단용
+  const now = new Date()
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+
   function addParticipant() {
     if (!newName.trim()) return
     setParticipants(prev => [...prev, { name: newName.trim(), contact: newContact.trim() || undefined, isRequired: newIsRequired }])
@@ -120,6 +124,7 @@ export function CreateMeeting() {
               <input
                 className={`${styles.input} ${errors.startDate ? styles.inputError : ''}`}
                 type="date"
+                min={todayStr}
                 value={startDate}
                 onChange={e => { setStartDate(e.target.value); setErrors(p => ({...p, startDate: ''})) }}
               />
@@ -130,6 +135,7 @@ export function CreateMeeting() {
               <input
                 className={`${styles.input} ${errors.endDate ? styles.inputError : ''}`}
                 type="date"
+                min={startDate || todayStr}
                 value={endDate}
                 onChange={e => { setEndDate(e.target.value); setErrors(p => ({...p, endDate: ''})) }}
               />
@@ -142,6 +148,8 @@ export function CreateMeeting() {
             <input
               className={`${styles.input} ${errors.responseDeadline ? styles.inputError : ''}`}
               type="date"
+              min={todayStr}
+              max={endDate || undefined}
               value={responseDeadline}
               onChange={e => { setResponseDeadline(e.target.value); setErrors(p => ({...p, responseDeadline: ''})) }}
             />
@@ -203,43 +211,43 @@ export function CreateMeeting() {
           <p className={styles.hint}>지금 추가하지 않아도 링크 공유 후 참여자가 직접 합류할 수 있어요</p>
 
           <div className={styles.participantInput}>
-            <div className={styles.participantFields}>
-              <input
-                className={styles.input}
-                type="text"
-                placeholder="이름 (예: 송서현A)"
-                value={newName}
-                onChange={e => setNewName(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addParticipant() } }}
-              />
-              <input
-                className={styles.input}
-                type="text"
-                placeholder="연락처 (선택) — 카카오톡·전화번호 등"
-                value={newContact}
-                onChange={e => setNewContact(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addParticipant() } }}
-              />
-            </div>
-            <div className={styles.requiredToggle}>
-              <button
-                type="button"
-                className={`${styles.toggleBtn} ${newIsRequired ? styles.toggleOn : styles.toggleOff}`}
-                onClick={() => setNewIsRequired(true)}
-              >
-                필수
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="이름 (예: 송서현A)"
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addParticipant() } }}
+            />
+            <input
+              className={styles.input}
+              type="text"
+              placeholder="연락처 (선택) — 카카오톡·전화번호 등"
+              value={newContact}
+              onChange={e => setNewContact(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addParticipant() } }}
+            />
+            <div className={styles.participantActions}>
+              <div className={styles.requiredToggle}>
+                <button
+                  type="button"
+                  className={`${styles.toggleBtn} ${newIsRequired ? styles.toggleOn : styles.toggleOff}`}
+                  onClick={() => setNewIsRequired(true)}
+                >
+                  필수
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.toggleBtn} ${!newIsRequired ? styles.toggleOn : styles.toggleOff}`}
+                  onClick={() => setNewIsRequired(false)}
+                >
+                  선택
+                </button>
+              </div>
+              <button type="button" className={styles.addBtn} onClick={addParticipant}>
+                추가
               </button>
-              <button
-                type="button"
-                className={`${styles.toggleBtn} ${!newIsRequired ? styles.toggleOn : styles.toggleOff}`}
-                onClick={() => setNewIsRequired(false)}
-              >
-                선택
-              </button>
             </div>
-            <button type="button" className={styles.addBtn} onClick={addParticipant}>
-              추가
-            </button>
           </div>
 
           {participants.length > 0 && (
