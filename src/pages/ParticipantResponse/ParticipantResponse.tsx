@@ -299,29 +299,6 @@ export function ParticipantResponse() {
             )}
           </div>
 
-          {meeting.format === 'both' && (
-            <div className={styles.formatPick}>
-              <p className={styles.formatPickLabel}>어떻게 참여하실 예정인가요?</p>
-              <div className={styles.formatPickRow}>
-                {([
-                  { value: 'online', icon: 'monitor', label: '온라인' },
-                  { value: 'offline', icon: 'pin', label: '오프라인' },
-                  { value: 'both', icon: 'shuffle', label: '모두 가능' },
-                ] as { value: 'online' | 'offline' | 'both'; icon: 'monitor' | 'pin' | 'shuffle'; label: string }[]).map(opt => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    className={`${styles.formatPickBtn} ${formatPreference === opt.value ? styles.formatPickBtnActive : ''}`}
-                    onClick={() => setFormatPreference(opt.value)}
-                  >
-                    <span style={{ display: 'flex' }}><Icon name={opt.icon} size={18} /></span>
-                    <span>{opt.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {hasUnfilledOverlap && (
             <button type="button" className={styles.prefillBtn} onClick={prefillFromOthers}>
               <span className={styles.prefillMain}><Icon name="sparkle" size={15} /> 다들 가능한 시간 먼저 채우기</span>
@@ -346,6 +323,29 @@ export function ParticipantResponse() {
             othersTotal={othersTotal}
             activeKeys={viableKeys}
           />
+
+          {meeting.format === 'both' && (
+            <div className={styles.formatPick}>
+              <p className={styles.formatPickLabel}>이 회의, 어떻게 참여하실 예정인가요?</p>
+              <div className={styles.formatPickRow}>
+                {([
+                  { value: 'online', icon: 'monitor', label: '온라인' },
+                  { value: 'offline', icon: 'pin', label: '오프라인' },
+                  { value: 'both', icon: 'shuffle', label: '모두 가능' },
+                ] as { value: 'online' | 'offline' | 'both'; icon: 'monitor' | 'pin' | 'shuffle'; label: string }[]).map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className={`${styles.formatPickBtn} ${formatPreference === opt.value ? styles.formatPickBtnActive : ''}`}
+                    onClick={() => setFormatPreference(opt.value)}
+                  >
+                    <span style={{ display: 'flex' }}><Icon name={opt.icon} size={18} /></span>
+                    <span>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className={styles.floatBar}>
             <button className={styles.floatSubmit} onClick={handleSubmit} disabled={markedCount === 0}>
