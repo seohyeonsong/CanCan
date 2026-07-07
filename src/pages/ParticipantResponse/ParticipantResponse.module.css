@@ -70,36 +70,27 @@
   gap: 16px;
 }
 
-/* 하단 고정 제출 바 */
+/* 제출 바 (인라인 — 참여방식을 지나야 도달) */
 .floatBar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 40;
   display: flex;
   justify-content: center;
-  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(248,250,252,0) 0%, var(--color-grey-50) 40%);
-  pointer-events: none;
+  margin-top: 4px;
 }
 .floatSubmit {
-  pointer-events: auto;
   width: 100%;
-  max-width: 480px;
   height: 54px;
   background: var(--color-primary);
   color: var(--color-white);
   border-radius: var(--radius-lg);
   font-size: 16px;
   font-weight: 700;
-  box-shadow: 0 6px 20px rgba(49,130,246,0.35);
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), transform 100ms;
 }
 .floatSubmit:hover:not(:disabled) { background: var(--color-primary-hover); }
+.floatSubmit:active:not(:disabled) { transform: scale(0.99); }
 .floatSubmit:disabled {
-  background: var(--color-grey-300);
-  box-shadow: none;
+  background: var(--color-grey-200);
+  color: var(--color-grey-400);
   cursor: not-allowed;
 }
 
