@@ -142,6 +142,13 @@ export function ParticipantResponse() {
         <Logo size="sm" />
       </header>
 
+      {step === 'grid' && (
+        <div className={styles.whoBar}>
+          <span className={styles.whoName}><b>{name}</b>님으로 응답 중</span>
+          <button className={styles.whoEdit} onClick={() => setStep('name')}>이름 수정</button>
+        </div>
+      )}
+
       <div className={styles.contextCard}>
         <p className={styles.contextLabel}>회의 요청</p>
         <h2 className={styles.contextTitle}>{meeting.title}</h2>
@@ -265,14 +272,6 @@ export function ParticipantResponse() {
       {step === 'grid' && (
         <div className={styles.gridCard}>
           <div className={styles.gridHeader}>
-            {/* 누구로 응답 중인지 + 인라인 수정 */}
-            <div className={styles.whoBar}>
-              <span className={styles.whoName}>
-                <b>{name}</b>님으로 응답 중
-              </span>
-              <button className={styles.whoEdit} onClick={() => setStep('name')}>이름 수정</button>
-            </div>
-
             {meeting && name && isEditingExisting(meeting, name) ? (
               <div className={styles.editBanner}>
                 <span className={styles.firstBannerIcon}><Icon name="pencil" size={15} /></span>
