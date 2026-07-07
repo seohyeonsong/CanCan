@@ -111,6 +111,17 @@ export function OrganizerDashboard() {
     navigate(`/meeting/${id}/confirmed`)
   }
 
+  // 참여 링크 공유 (언제든)
+  function shareLink() {
+    const msg = [
+      `📅 *${meeting!.title}* 회의 시간을 맞춰요!`,
+      '아래 링크에서 가능한 시간을 표시해주세요 🙏',
+      '',
+      respondUrl,
+    ].join('\n')
+    shareOrCopy(msg, respondUrl).then(res => flash(res))
+  }
+
   // 응답 안 한 사람 재촉 메시지
   function shareNudge() {
     const names = pending.map(p => p.name).join(', ')
@@ -167,7 +178,12 @@ export function OrganizerDashboard() {
 
       {/* 헤더 */}
       <header className={styles.header}>
-        <button className={styles.backBtn} onClick={() => navigate('/meetings')}>‹ 회의 목록</button>
+        <div className={styles.headerTop}>
+          <button className={styles.backBtn} onClick={() => navigate('/meetings')}>‹ 회의 목록</button>
+          <button className={styles.shareBtn} onClick={shareLink}>
+            <Icon name="link" size={15} /> 링크 공유
+          </button>
+        </div>
         <div className={styles.meetingMeta}>
           <h2 className={styles.meetingTitle}>
             {meeting.title}

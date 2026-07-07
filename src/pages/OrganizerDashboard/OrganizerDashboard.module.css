@@ -9,8 +9,13 @@
 
 /* 헤더 */
 .header { display: flex; flex-direction: column; gap: 10px; }
+.headerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
 .backBtn {
-  align-self: flex-start;
   font-size: 14px;
   font-weight: 700;
   color: var(--color-primary);
@@ -18,6 +23,20 @@
   transition: color 150ms;
 }
 .backBtn:hover { color: var(--color-primary-hover); }
+.shareBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 700;
+  transition: background 150ms, transform 100ms;
+}
+.shareBtn:hover { background: var(--color-primary-200); }
+.shareBtn:active { transform: scale(0.96); }
 .meetingMeta { display: flex; flex-direction: column; gap: 4px; }
 .meetingTitle {
   font-size: 28px;
