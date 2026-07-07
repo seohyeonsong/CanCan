@@ -10,6 +10,7 @@ interface RecommendationCardProps {
   onCoordinate?: () => void
   isSelected?: boolean
   confirmContent?: React.ReactNode
+  requiredNames?: string[]
 }
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토']
@@ -31,8 +32,9 @@ function getTagColor(tag: string): 'blue' | 'green' | 'orange' | 'yellow' | 'gre
   return 'blue'
 }
 
-export function RecommendationCard({ recommendation, rank, onConfirm, onCoordinate, isSelected, confirmContent }: RecommendationCardProps) {
+export function RecommendationCard({ recommendation, rank, onConfirm, onCoordinate, isSelected, confirmContent, requiredNames = [] }: RecommendationCardProps) {
   const { slot, tags, flexibleCount, availableNames, blockedNames } = recommendation
+  const isReq = (n: string) => requiredNames.includes(n)
   const isTop = rank === 1
   const total = availableNames.length + blockedNames.length
   const allAvailable = blockedNames.length === 0 && availableNames.length > 0
@@ -64,6 +66,7 @@ export function RecommendationCard({ recommendation, rank, onConfirm, onCoordina
                 const isOfflineOnly = recommendation.offlineNames.includes(n)
                 return (
                   <span key={n} className={`${styles.nameChip} ${styles.nameChipOk}`}>
+                    {isReq(n) && <span className={styles.reqDot} title="필수 참석자" />}
                     {n}
                     {isOnlineOnly && <span className={styles.formatTag}><Icon name="monitor" size={12} /></span>}
                     {isOfflineOnly && <span className={styles.formatTag}><Icon name="pin" size={12} /></span>}
@@ -76,7 +79,10 @@ export function RecommendationCard({ recommendation, rank, onConfirm, onCoordina
             <div className={styles.participantRow}>
               <span className={styles.participantRowLabel}>불가</span>
               {recommendation.blockedNames.map(n => (
-                <span key={n} className={`${styles.nameChip} ${styles.nameChipNo}`}>{n}</span>
+                <span key={n} className={`${styles.nameChip} ${styles.nameChipNo}`}>
+                  {isReq(n) && <span className={styles.reqDot} title="필수 참석자" />}
+                  {n}
+                </span>
               ))}
             </div>
           )}

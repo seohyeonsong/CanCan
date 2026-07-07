@@ -77,6 +77,7 @@ export function OrganizerDashboard() {
   if (!meeting) return <div className={styles.error}>회의를 찾을 수 없어요</div>
 
   const responded = meeting.participants.filter(p => p.submittedAt !== null)
+  const requiredNames = meeting.participants.filter(p => p.isRequired).map(p => p.name)
   const pending = meeting.participants.filter(p => p.submittedAt === null)
   const respondUrl = `${window.location.origin}/meeting/${id}/respond`
   const dates = getDateRange(meeting.dateRange.start, meeting.dateRange.end)
@@ -349,7 +350,12 @@ export function OrganizerDashboard() {
 
           {/* 추천 시간 */}
           <section className={styles.recommendSection}>
-            <h3 className={styles.sectionTitle}>추천 시간</h3>
+            <div className={styles.recHeader}>
+              <h3 className={styles.sectionTitle}>추천 시간</h3>
+              {requiredNames.length > 0 && (
+                <span className={styles.reqLegend}><span className={styles.reqLegendDot} />필수 참석자</span>
+              )}
+            </div>
             {responded.length === 0 ? (
               <p className={styles.emptyNote}>응답이 모이면 최적 시간을 추천해드려요</p>
             ) : recommendations.length > 0 ? (
@@ -424,6 +430,7 @@ export function OrganizerDashboard() {
                       onCoordinate={() => shareCoordinate(rec)}
                       isSelected={isSelected}
                       confirmContent={confirmPanel}
+                      requiredNames={requiredNames}
                     />
                   )
                 })}

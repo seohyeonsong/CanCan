@@ -104,6 +104,7 @@
 .nameChip {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   padding: 2px 8px;
   border-radius: 999px;
   font-size: 12px;
@@ -126,6 +127,14 @@
   color: #991b1b;
   text-decoration: line-through;
   opacity: 0.7;
+}
+
+.reqDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
 }
 
 .actions {
