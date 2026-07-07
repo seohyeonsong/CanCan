@@ -145,6 +145,24 @@ export function OrganizerDashboard() {
     shareOrCopy(msg, respondUrl).then(res => flash(res))
   }
 
+  // 특정 시간에 불가한 사람에게 조율 요청
+  function shareCoordinate(rec: Recommendation) {
+    const d = new Date(rec.slot.date + 'T00:00:00')
+    const ampm = rec.slot.hour < 12 ? '오전' : '오후'
+    const h = rec.slot.hour > 12 ? rec.slot.hour - 12 : rec.slot.hour
+    const min = rec.slot.minute === 30 ? ' 30분' : ''
+    const when = `${d.getMonth() + 1}월 ${d.getDate()}일 (${DAYS[d.getDay()]}) ${ampm} ${h}시${min}`
+    const who = rec.blockedNames.join(', ')
+    const msg = [
+      `🗓 *${meeting!.title}* 회의를 ${when}에 잡으려고 해요.`,
+      `${who}님이 그 시간이 어려우신데, 혹시 조정 가능하실까요?`,
+      '가능하면 아래에서 시간을 업데이트해 주세요 🙏',
+      '',
+      respondUrl,
+    ].join('\n')
+    shareOrCopy(msg, respondUrl).then(res => flash(res))
+  }
+
   function flash(res: 'shared' | 'copied') {
     setShareToast(res === 'copied' ? '메시지가 복사됐어요' : '공유했어요')
     setTimeout(() => setShareToast(null), 2000)
@@ -403,6 +421,7 @@ export function OrganizerDashboard() {
                       recommendation={rec}
                       rank={i + 1}
                       onConfirm={() => handleConfirm(rec)}
+                      onCoordinate={() => shareCoordinate(rec)}
                       isSelected={isSelected}
                       confirmContent={confirmPanel}
                     />

@@ -7,6 +7,7 @@ interface RecommendationCardProps {
   recommendation: Recommendation
   rank: number
   onConfirm: () => void
+  onCoordinate?: () => void
   isSelected?: boolean
   confirmContent?: React.ReactNode
 }
@@ -30,7 +31,7 @@ function getTagColor(tag: string): 'blue' | 'green' | 'orange' | 'yellow' | 'gre
   return 'blue'
 }
 
-export function RecommendationCard({ recommendation, rank, onConfirm, isSelected, confirmContent }: RecommendationCardProps) {
+export function RecommendationCard({ recommendation, rank, onConfirm, onCoordinate, isSelected, confirmContent }: RecommendationCardProps) {
   const { slot, tags, flexibleCount, availableNames, blockedNames } = recommendation
   const isTop = rank === 1
   const total = availableNames.length + blockedNames.length
@@ -89,12 +90,22 @@ export function RecommendationCard({ recommendation, rank, onConfirm, isSelected
         )}
       </div>
       {confirmContent ?? (
-        <button
-          className={`${styles.btn} ${isTop ? styles.btnPrimary : styles.btnSecondary}`}
-          onClick={onConfirm}
-        >
-          이 시간으로 확정
-        </button>
+        <div className={styles.actions}>
+          {blockedNames.length > 0 && onCoordinate && (
+            <button className={styles.coordinateBtn} onClick={onCoordinate}>
+              <Icon name="message" size={14} />
+              {blockedNames.length === 1
+                ? `${blockedNames[0]}님에게 조율 요청`
+                : `못 오는 ${blockedNames.length}명에게 조율 요청`}
+            </button>
+          )}
+          <button
+            className={`${styles.btn} ${isTop ? styles.btnPrimary : styles.btnSecondary}`}
+            onClick={onConfirm}
+          >
+            이 시간으로 확정
+          </button>
+        </div>
       )}
     </div>
   )
