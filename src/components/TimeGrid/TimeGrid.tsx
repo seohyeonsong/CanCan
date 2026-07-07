@@ -320,8 +320,9 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
               <span className={styles.tooltipLabel}>{PREF_LABELS[p]}</span>
             </button>
           ))}
-          <button className={styles.tooltipClear} onClick={() => applyPref('no')}>
-            선택 해제
+          <button className={`${styles.tooltipBtn} ${styles.tooltipClear}`} onClick={() => applyPref('no')}>
+            <span className={styles.tooltipIcon}><Icon name="x" size={15} /></span>
+            <span className={styles.tooltipLabel}>선택 해제</span>
           </button>
         </div>
       )}
