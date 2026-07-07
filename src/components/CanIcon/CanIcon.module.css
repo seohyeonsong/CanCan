@@ -5,6 +5,22 @@
   gap: 4px;
 }
 
+.roleTag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  line-height: 1.5;
+}
+.roleRequired {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+.roleOptional {
+  background: var(--color-grey-100);
+  color: var(--color-grey-500);
+}
+
 .name {
   font-size: 12px;
   font-weight: 700;

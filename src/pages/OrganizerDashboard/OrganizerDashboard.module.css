@@ -29,13 +29,13 @@
   gap: 6px;
   padding: 8px 14px;
   border-radius: 999px;
-  background: var(--color-primary-light);
-  color: var(--color-primary);
+  background: var(--color-grey-100);
+  color: var(--color-grey-600);
   font-size: 13px;
-  font-weight: 700;
-  transition: background 150ms, transform 100ms;
+  font-weight: 600;
+  transition: background 150ms, color 150ms, transform 100ms;
 }
-.shareBtn:hover { background: var(--color-primary-200); }
+.shareBtn:hover { background: var(--color-grey-200); color: var(--color-grey-800); }
 .shareBtn:active { transform: scale(0.96); }
 .meetingMeta { display: flex; flex-direction: column; gap: 4px; }
 .meetingTitle {

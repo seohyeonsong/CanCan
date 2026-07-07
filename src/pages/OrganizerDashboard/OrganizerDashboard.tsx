@@ -285,7 +285,7 @@ export function OrganizerDashboard() {
                       onMouseLeave={() => setHoveredParticipant(null)}
                       onClick={() => setHoveredParticipant(prev => prev === p.name ? null : p.name)}
                     >
-                      <CanIcon name={p.name} size={64} pending={!p.submittedAt} colorIndex={i} />
+                      <CanIcon name={p.name} size={64} pending={!p.submittedAt} colorIndex={i} required={p.isRequired} />
                       {hoveredParticipant === p.name && (
                         <div className={styles.participantPopup}>
                           <span className={styles.popupName}>{p.name}</span>

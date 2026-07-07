@@ -7,6 +7,7 @@ interface CanIconProps {
   darkBg?: boolean
   showName?: boolean
   colorIndex?: number
+  required?: boolean
 }
 
 const POM_COLORS = ['blue', 'orange', 'mint', 'pink', 'purple', 'yellow', 'white']
@@ -18,7 +19,7 @@ function pomColorByName(name: string): string {
   return POM_COLORS[h % POM_COLORS.length]
 }
 
-export function CanIcon({ name, size = 48, pending = false, darkBg = false, showName = true, colorIndex }: CanIconProps) {
+export function CanIcon({ name, size = 48, pending = false, darkBg = false, showName = true, colorIndex, required }: CanIconProps) {
   const color = colorIndex != null ? POM_COLORS[colorIndex % POM_COLORS.length] : pomColorByName(name)
 
   return (
@@ -42,6 +43,12 @@ export function CanIcon({ name, size = 48, pending = false, darkBg = false, show
           }}
         >
           {name}
+        </span>
+      )}
+
+      {showName && required != null && (
+        <span className={`${styles.roleTag} ${required ? styles.roleRequired : styles.roleOptional}`}>
+          {required ? '필수' : '선택'}
         </span>
       )}
     </div>
