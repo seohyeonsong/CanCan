@@ -329,6 +329,15 @@ export function ParticipantResponse() {
             </button>
           )}
 
+          {markedCount > 0 && (
+            <div className={styles.gridToolbar}>
+              <span className={styles.markedCountText}>{markedCount}칸 선택됨</span>
+              <button type="button" className={styles.resetBtn} onClick={() => setPreferences({})}>
+                <Icon name="refresh" size={13} /> 전체 해제
+              </button>
+            </div>
+          )}
+
           <TimeGrid
             dates={dates}
             preferences={preferences}
