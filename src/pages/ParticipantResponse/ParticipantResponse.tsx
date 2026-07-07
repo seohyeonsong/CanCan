@@ -324,7 +324,7 @@ export function ParticipantResponse() {
 
           {hasUnfilledOverlap && (
             <button type="button" className={styles.prefillBtn} onClick={prefillFromOthers}>
-              <Icon name="sparkle" size={15} /> 다들 가능한 시간 먼저 채우기
+              <span className={styles.prefillMain}><Icon name="sparkle" size={15} /> 다들 가능한 시간 먼저 채우기</span>
               <span className={styles.prefillSub}>안 되는 시간만 빼면 돼요</span>
             </button>
           )}
