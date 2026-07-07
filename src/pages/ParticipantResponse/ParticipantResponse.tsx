@@ -121,6 +121,21 @@ export function ParticipantResponse() {
     setStep('done')
   }
 
+  // 남들이 가능한 시간을 내 응답으로 미리 채운다 (이미 표시한 칸은 유지) → 안 되는 것만 빼면 됨
+  function prefillFromOthers() {
+    setPreferences(prev => {
+      const next = { ...prev }
+      for (const key of Object.keys(othersCount)) {
+        if (!next[key]) next[key] = 'okay'
+      }
+      return next
+    })
+  }
+
+  // 아직 남들 겹침 칸 중 내가 안 채운 게 있는지 (버튼 노출 판단)
+  const hasUnfilledOverlap = !isFirstParticipant &&
+    Object.keys(othersCount).some(key => !preferences[key])
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
@@ -305,6 +320,13 @@ export function ParticipantResponse() {
                 ))}
               </div>
             </div>
+          )}
+
+          {hasUnfilledOverlap && (
+            <button type="button" className={styles.prefillBtn} onClick={prefillFromOthers}>
+              <Icon name="sparkle" size={15} /> 다들 가능한 시간 먼저 채우기
+              <span className={styles.prefillSub}>안 되는 시간만 빼면 돼요</span>
+            </button>
           )}
 
           <TimeGrid

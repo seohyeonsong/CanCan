@@ -478,6 +478,30 @@
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+/* 남들 겹침 미리 채우기 */
+.prefillBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1.5px dashed var(--color-primary-200);
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 150ms;
+}
+.prefillBtn:hover { background: var(--color-primary-200); }
+.prefillSub {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--color-primary);
+  opacity: 0.75;
+}
+
 /* 확정 화면 위계 */
 .pageHeadline {
   font-size: 24px;
