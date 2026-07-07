@@ -290,9 +290,9 @@ export function ParticipantResponse() {
               <>
                 <h3 className={styles.stepTitle}>가능한 시간을 표시해주세요</h3>
                 <div className={styles.narrowBanner}>
-                  <span>이미 {othersTotal}명이 응답했어요 · <b>테두리</b>가 진할수록 여러 명이 가능해요</span>
+                  <span>이미 <b>{othersTotal}명</b>이 응답했어요</span>
                   <span className={styles.narrowSub}>
-                    {allOthersResponded ? '회색 칸은 아무도 안 되는 시간이라 잠겨 있어요' : '겹치는 시간에 맞추면 조율이 빨라져요'}
+                    {allOthersResponded ? '회색 칸은 아무도 안 되는 시간이라 잠겨 있어요' : '테두리가 진한 시간에 맞추면 조율이 빨라져요'}
                   </span>
                 </div>
               </>

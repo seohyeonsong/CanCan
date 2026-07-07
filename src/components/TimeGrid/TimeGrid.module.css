@@ -176,6 +176,7 @@
   font-size: 11px;
   color: var(--color-grey-400);
   text-align: center;
+  word-break: keep-all;
 }
 
 /* Preference tooltip */

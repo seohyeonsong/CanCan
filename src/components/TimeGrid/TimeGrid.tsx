@@ -291,7 +291,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
 
       {/* Drag hint */}
       {!readOnly && (
-        <p className={styles.hint}>드래그해서 가능한 시간을 표시하세요 · 표시 안 한 칸은 참석 불가로 처리돼요</p>
+        <p className={styles.hint}>드래그로 가능한 시간을 표시하세요 · 빈 칸은 참석 불가로 처리돼요</p>
       )}
 
       {/* Preference tooltip */}
