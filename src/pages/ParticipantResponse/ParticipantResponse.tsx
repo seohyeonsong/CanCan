@@ -65,7 +65,14 @@ export function ParticipantResponse() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meeting, isSetup])
 
-  if (!meeting) return <div className={styles.error}>회의를 찾을 수 없어요</div>
+  if (!meeting) return (
+    <div className={styles.errorPage}>
+      <Logo size="md" />
+      <p className={styles.errorTitle}>회의를 찾을 수 없어요</p>
+      <p className={styles.errorDesc}>링크가 잘렸거나 만료됐을 수 있어요.<br />주최자에게 링크를 다시 요청해주세요.</p>
+      <button className={styles.errorHomeBtn} onClick={() => navigate('/')}>CanCan 둘러보기</button>
+    </div>
+  )
 
   // 이미 확정된 회의면 결과 화면
   if (meeting.confirmedSlot && step !== 'done') {

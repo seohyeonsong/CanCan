@@ -25,6 +25,8 @@ export default function App() {
         <Route path="/meeting/:id/confirmed" element={<RequireAuth><Confirmation /></RequireAuth>} />
         {/* 응답 페이지는 로그인 없이도 접근 가능 (외부 초대) */}
         <Route path="/meeting/:id/respond" element={<ParticipantResponse />} />
+        {/* 알 수 없는 주소 → 홈으로 (빈 화면 방지) */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

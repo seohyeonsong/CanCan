@@ -607,3 +607,26 @@
   font-size: 12.5px;
   color: var(--color-grey-500);
 }
+
+/* 회의 없음 에러 화면 */
+.errorPage {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 24px;
+  text-align: center;
+}
+.errorTitle { font-size: 18px; font-weight: 800; color: var(--color-grey-900); margin-top: 8px; }
+.errorDesc { font-size: 13.5px; color: var(--color-grey-500); line-height: 1.6; }
+.errorHomeBtn {
+  margin-top: 10px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
