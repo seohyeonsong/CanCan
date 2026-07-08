@@ -65,7 +65,6 @@ export function CreateMeeting() {
     else if (new Date(startDate) < today) newErrors.startDate = '오늘 이후 날짜를 선택해주세요'
     if (!endDate) newErrors.endDate = '종료일을 선택해주세요'
     else if (startDate && endDate < startDate) newErrors.endDate = '종료일은 시작일 이후여야 해요'
-    if (responseDeadline && endDate && responseDeadline > endDate) newErrors.responseDeadline = '응답 마감일은 종료일 이전이어야 해요'
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
       // 에러가 폼 위쪽에 있으니, 눌렀는데 아무 일도 없어 보이지 않게 위로 스크롤
@@ -162,7 +161,6 @@ export function CreateMeeting() {
               className={`${styles.input} ${errors.responseDeadline ? styles.inputError : ''}`}
               type="date"
               min={todayStr}
-              max={endDate || undefined}
               value={responseDeadline}
               onChange={e => { setResponseDeadline(e.target.value); setErrors(p => ({...p, responseDeadline: ''})) }}
             />
@@ -227,7 +225,7 @@ export function CreateMeeting() {
             <input
               className={styles.input}
               type="text"
-              placeholder="이름 (예: 송서현A)"
+              placeholder="이름 (예: 김토스 B)"
               value={newName}
               onChange={e => setNewName(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addParticipant() } }}
