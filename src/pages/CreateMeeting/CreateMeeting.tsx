@@ -66,7 +66,12 @@ export function CreateMeeting() {
     if (!endDate) newErrors.endDate = '종료일을 선택해주세요'
     else if (startDate && endDate < startDate) newErrors.endDate = '종료일은 시작일 이후여야 해요'
     if (responseDeadline && endDate && responseDeadline > endDate) newErrors.responseDeadline = '응답 마감일은 종료일 이전이어야 해요'
-    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      // 에러가 폼 위쪽에 있으니, 눌렀는데 아무 일도 없어 보이지 않게 위로 스크롤
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
     setErrors({})
     const meeting = createMeeting({
       title,
@@ -82,7 +87,6 @@ export function CreateMeeting() {
     navigate(`/meeting/${meeting.id}/respond?setup=1`)
   }
 
-  const isValid = title && organizerName && startDate && endDate
 
   return (
     <div className={styles.container}>
@@ -284,7 +288,7 @@ export function CreateMeeting() {
           )}
         </div>
 
-        <button type="submit" className={styles.submitBtn} disabled={!isValid}>
+        <button type="submit" className={styles.submitBtn}>
           링크 만들기
         </button>
       </form>
