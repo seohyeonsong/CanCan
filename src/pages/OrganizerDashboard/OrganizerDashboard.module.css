@@ -843,3 +843,15 @@
   border-radius: 50%;
   background: var(--color-primary);
 }
+
+/* 데모 제약 안내 (실시간 동기화 없음) */
+.demoLimitNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-grey-500);
+  line-height: 1.55;
+  margin-top: -12px;
+}
+.demoLimitNote svg { flex-shrink: 0; margin-top: 2px; }

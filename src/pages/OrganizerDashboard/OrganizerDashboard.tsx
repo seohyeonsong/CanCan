@@ -241,6 +241,11 @@ export function OrganizerDashboard() {
         </div>
       )}
 
+      {/* 데모 제약 안내 — 실시간 동기화 없음을 투명하게 */}
+      <p className={styles.demoLimitNote}>
+        <Icon name="bulb" size={13} /> 데모 버전은 이 브라우저 안에서 전체 흐름을 체험하도록 만들어졌어요. 다른 기기에서 한 응답은 실시간으로 모이지 않아요 (실서비스에선 서버로 동기화).
+      </p>
+
       {/* 탭 토글 — 모바일에서만 표시 */}
       <div className={styles.tabRow}>
         <button
