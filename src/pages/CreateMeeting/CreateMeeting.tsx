@@ -24,7 +24,11 @@ export function CreateMeeting() {
   const user = getUser()
   const [title, setTitle] = useState('')
   const [organizerName, setOrganizerName] = useState('')
-  const [startDate, setStartDate] = useState('')
+  const [startDate, setStartDate] = useState(() => {
+    const n = new Date()
+    const p = (x: number) => String(x).padStart(2, '0')
+    return `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`
+  })
   const [endDate, setEndDate] = useState('')
   const [duration, setDuration] = useState(60)
   const [format, setFormat] = useState<MeetingFormat>('online')
@@ -118,28 +122,33 @@ export function CreateMeeting() {
             {errors.organizerName && <p className={styles.errorMsg}>{errors.organizerName}</p>}
           </div>
 
-          <div className={styles.fieldRow}>
-            <div className={styles.field}>
-              <label className={styles.label}>시작일</label>
-              <input
-                className={`${styles.input} ${errors.startDate ? styles.inputError : ''}`}
-                type="date"
-                min={todayStr}
-                value={startDate}
-                onChange={e => { setStartDate(e.target.value); setErrors(p => ({...p, startDate: ''})) }}
-              />
-              {errors.startDate && <p className={styles.errorMsg}>{errors.startDate}</p>}
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label}>종료일</label>
-              <input
-                className={`${styles.input} ${errors.endDate ? styles.inputError : ''}`}
-                type="date"
-                min={startDate || todayStr}
-                value={endDate}
-                onChange={e => { setEndDate(e.target.value); setErrors(p => ({...p, endDate: ''})) }}
-              />
-              {errors.endDate && <p className={styles.errorMsg}>{errors.endDate}</p>}
+          <div className={styles.field}>
+            <label className={styles.label}>후보 기간</label>
+            <p className={styles.fieldHint}>이 기간 안에서 다 같이 되는 시간을 찾아요</p>
+            <div className={styles.fieldRow}>
+              <div className={styles.field}>
+                <input
+                  className={`${styles.input} ${errors.startDate ? styles.inputError : ''}`}
+                  type="date"
+                  aria-label="언제부터"
+                  min={todayStr}
+                  value={startDate}
+                  onChange={e => { setStartDate(e.target.value); setErrors(p => ({...p, startDate: ''})) }}
+                />
+                {errors.startDate && <p className={styles.errorMsg}>{errors.startDate}</p>}
+              </div>
+              <span className={styles.rangeSep}>~</span>
+              <div className={styles.field}>
+                <input
+                  className={`${styles.input} ${errors.endDate ? styles.inputError : ''}`}
+                  type="date"
+                  aria-label="언제까지"
+                  min={startDate || todayStr}
+                  value={endDate}
+                  onChange={e => { setEndDate(e.target.value); setErrors(p => ({...p, endDate: ''})) }}
+                />
+                {errors.endDate && <p className={styles.errorMsg}>{errors.endDate}</p>}
+              </div>
             </div>
           </div>
 
