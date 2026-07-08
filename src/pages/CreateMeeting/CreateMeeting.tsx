@@ -23,8 +23,7 @@ export function CreateMeeting() {
   const navigate = useNavigate()
   const user = getUser()
   const [title, setTitle] = useState('')
-  const [organizerName, setOrganizerName] = useState(user?.name ?? '')
-  const [orgTouched, setOrgTouched] = useState(false)
+  const [organizerName, setOrganizerName] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [duration, setDuration] = useState(60)
@@ -114,8 +113,7 @@ export function CreateMeeting() {
               type="text"
               placeholder="김토스 A"
               value={organizerName}
-              onFocus={() => { if (!orgTouched) { setOrgTouched(true); setOrganizerName('') } }}
-              onChange={e => { setOrgTouched(true); setOrganizerName(e.target.value); setErrors(p => ({...p, organizerName: ''})) }}
+              onChange={e => { setOrganizerName(e.target.value); setErrors(p => ({...p, organizerName: ''})) }}
             />
             {errors.organizerName && <p className={styles.errorMsg}>{errors.organizerName}</p>}
           </div>
