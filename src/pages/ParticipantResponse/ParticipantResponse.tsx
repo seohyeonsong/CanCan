@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { getMeeting, submitResponse, addParticipant } from '../../lib/store'
 import { buildGoogleCalendarUrl } from '../../lib/calendarLink'
 import { TimeGrid } from '../../components/TimeGrid/TimeGrid'
@@ -24,6 +24,10 @@ function isEditingExisting(meeting: { participants: { name: string; submittedAt:
 
 export function ParticipantResponse() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const isSetup = searchParams.get('setup') === '1'
+  const [isOrganizerSetup, setIsOrganizerSetup] = useState(false)
   const [meeting, setMeeting] = useState<Meeting | null>(null)
   const [step, setStep] = useState<Step>('name')
   const [name, setName] = useState('')
@@ -36,6 +40,18 @@ export function ParticipantResponse() {
   useEffect(() => {
     if (id) setMeeting(getMeeting(id))
   }, [id])
+
+  // 회의 생성 직후: 주최자가 자기 가능 시간을 바로 입력하는 셋업 모드
+  useEffect(() => {
+    if (!meeting || !isSetup) return
+    const me = getUser()
+    if (me?.email && meeting.ownerEmail === me.email) {
+      setName(meeting.organizerName)
+      setIsOrganizerSetup(true)
+      setStep('grid')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [meeting, isSetup])
 
   if (!meeting) return <div className={styles.error}>회의를 찾을 수 없어요</div>
 
@@ -129,9 +145,11 @@ export function ParticipantResponse() {
   function handleSubmit() {
     if (!id || !name.trim() || !meeting || markedCount === 0) return
     const loggedInUser = getUser()
-    addParticipant(id, name.trim(), false, contact.trim() || undefined, loggedInUser?.email)
+    // 주최자 셋업이면 필수 참석자로 등록
+    addParticipant(id, name.trim(), isOrganizerSetup, contact.trim() || undefined, loggedInUser?.email)
     const fp = meeting.format === 'both' ? (formatPreference ?? undefined) : undefined
     submitResponse(id, name.trim(), preferences, fp)
+    if (isOrganizerSetup) { navigate(`/meeting/${id}/share`); return }
     setStep('done')
   }
 
@@ -158,8 +176,14 @@ export function ParticipantResponse() {
 
       {step === 'grid' && (
         <div className={styles.whoBar}>
-          <span className={styles.whoName}><b>{name}</b>님으로 응답 중</span>
-          <button className={styles.whoEdit} onClick={() => setStep('name')}>이름 수정</button>
+          <span className={styles.whoName}>
+            <b>{name}</b>님{isOrganizerSetup ? '(주최자)' : ''}으로 응답 중
+          </span>
+          {isOrganizerSetup ? (
+            <button className={styles.whoEdit} onClick={() => navigate(`/meeting/${id}/share`)}>참석 안 해요 · 건너뛰기</button>
+          ) : (
+            <button className={styles.whoEdit} onClick={() => setStep('name')}>이름 수정</button>
+          )}
         </div>
       )}
 

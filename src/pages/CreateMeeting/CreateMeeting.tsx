@@ -75,7 +75,7 @@ export function CreateMeeting() {
       responseDeadline: responseDeadline || undefined,
       participants,
     })
-    navigate(`/meeting/${meeting.id}/share`)
+    navigate(`/meeting/${meeting.id}/respond?setup=1`)
   }
 
   const isValid = title && organizerName && startDate && endDate
