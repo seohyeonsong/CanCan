@@ -13,6 +13,8 @@ html, body {
   color: var(--color-grey-900);
   background: var(--color-grey-50);
   -webkit-font-smoothing: antialiased;
+  /* 한글이 단어(어절) 중간에서 끊기지 않게 — "온/라인" 같은 어색한 줄바꿈 방지 */
+  word-break: keep-all;
 }
 
 #root {

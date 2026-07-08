@@ -114,11 +114,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 8px 12px;
   background: var(--color-grey-50);
   border-radius: 10px;
 }
+.whoName { flex: 1 1 auto; min-width: 0; }
 .whoName {
   font-size: 13px;
   color: var(--color-grey-600);
@@ -137,6 +139,20 @@
   background: var(--color-primary-light);
 }
 .whoEdit:hover { background: var(--color-primary-200); }
+
+/* 주최자 건너뛰기 — 다른 성격의 액션이라 색 구분(흰 배경+테두리) */
+.whoSkip {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-grey-600);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1.5px solid var(--color-grey-300);
+  white-space: nowrap;
+}
+.whoSkip:hover { background: var(--color-grey-100); color: var(--color-grey-800); }
 
 .stepTitle {
   font-size: 18px;

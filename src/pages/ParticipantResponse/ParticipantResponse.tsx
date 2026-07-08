@@ -180,7 +180,7 @@ export function ParticipantResponse() {
             <b>{name}</b>님{isOrganizerSetup ? '(주최자)' : ''}으로 응답 중
           </span>
           {isOrganizerSetup ? (
-            <button className={styles.whoEdit} onClick={() => navigate(`/meeting/${id}/share`)}>참석 안 해요 · 건너뛰기</button>
+            <button className={styles.whoSkip} onClick={() => navigate(`/meeting/${id}/share`)}>참석 안 해요, 건너뛰기 ›</button>
           ) : (
             <button className={styles.whoEdit} onClick={() => setStep('name')}>이름 수정</button>
           )}
