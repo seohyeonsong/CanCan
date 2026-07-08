@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { getMeeting, submitResponse, addParticipant } from '../../lib/store'
+import { getMeeting, submitResponse, addParticipant, importMeeting } from '../../lib/store'
+import { meetingFromHash } from '../../lib/meetingLink'
 import { buildGoogleCalendarUrl } from '../../lib/calendarLink'
 import { TimeGrid } from '../../components/TimeGrid/TimeGrid'
 import { getDateRange } from '../../lib/algorithm'
@@ -37,8 +38,19 @@ export function ParticipantResponse() {
   const [highlightFormat, setHighlightFormat] = useState(false)
   const formatRef = useRef<HTMLDivElement>(null)
 
+  const [restoredFromLink, setRestoredFromLink] = useState(false)
+
   useEffect(() => {
-    if (id) setMeeting(getMeeting(id))
+    if (!id) return
+    const existing = getMeeting(id)
+    if (existing) { setMeeting(existing); return }
+    // 이 브라우저에 회의가 없으면(다른 기기에서 열림) 링크에 담긴 스냅샷으로 복원
+    const fromLink = meetingFromHash(id)
+    if (fromLink) {
+      importMeeting(fromLink)
+      setMeeting(fromLink)
+      setRestoredFromLink(true)
+    }
   }, [id])
 
   // 회의 생성 직후: 주최자가 자기 가능 시간을 바로 입력하는 셋업 모드
@@ -177,7 +189,7 @@ export function ParticipantResponse() {
       {step === 'grid' && (
         <div className={styles.whoBar}>
           <span className={styles.whoName}>
-            <b>{name}</b>님{isOrganizerSetup ? '(주최자)' : ''}으로 응답 중
+            <b>{name}</b>님{isOrganizerSetup ? '(주최자)' : '으로 응답 중'}
           </span>
           {isOrganizerSetup ? (
             <button className={styles.whoSkip} onClick={() => navigate(`/meeting/${id}/share`)}>참석 안 해요, 건너뛰기 ›</button>
@@ -187,18 +199,25 @@ export function ParticipantResponse() {
         </div>
       )}
 
+      {step === 'grid' && restoredFromLink && (
+        <div className={styles.syncNote}>
+          <Icon name="bulb" size={14} />
+          <span>데모 환경이라 이 응답은 <b>지금 이 브라우저에만</b> 저장돼요. 실서비스에선 주최자에게 실시간으로 전달됩니다.</span>
+        </div>
+      )}
+
       <div className={styles.contextCard}>
         <p className={styles.contextLabel}>회의 요청</p>
         <h2 className={styles.contextTitle}>{meeting.title}</h2>
         <p className={styles.contextMeta}>
           {meeting.organizerName} · {fmtDate(meeting.dateRange.start)} ~ {fmtDate(meeting.dateRange.end)} · {meeting.durationMinutes}분
-          {formatMeta(meeting.format) && (
-            <span style={{ marginLeft: 6 }}>
-              · <Icon name={formatMeta(meeting.format)!.icon} size={13} /> {formatMeta(meeting.format)!.label}
-              {meeting.location && ` (${meeting.location})`}
-            </span>
-          )}
         </p>
+        {formatMeta(meeting.format) && (
+          <p className={styles.contextMeta}>
+            <Icon name={formatMeta(meeting.format)!.icon} size={13} /> {formatMeta(meeting.format)!.label}
+            {meeting.location && ` (${meeting.location})`}
+          </p>
+        )}
       </div>
 
       {step === 'name' && (

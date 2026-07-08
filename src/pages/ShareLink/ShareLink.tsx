@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting } from '../../lib/store'
 import { shareOrCopy, copyText } from '../../lib/share'
+import { buildRespondUrl } from '../../lib/meetingLink'
 import { Logo } from '../../components/Logo/Logo'
 import { Icon } from '../../components/Icon/Icon'
 import styles from './ShareLink.module.css'
@@ -34,7 +35,10 @@ export function ShareLink() {
 
   if (!meeting) return <div className={styles.error}>회의를 찾을 수 없어요</div>
 
-  const respondUrl = `${window.location.origin}/meeting/${id}/respond`
+  // 공유·복사용: 회의 스냅샷이 담긴 링크 (다른 기기에서 열어도 복원됨)
+  const respondUrl = buildRespondUrl(meeting)
+  // 화면 표시용: 짧은 주소 (실제 복사되는 건 위의 전체 링크)
+  const displayUrl = `${window.location.origin}/meeting/${id}/respond`
 
   function buildInviteMessage() {
     const m = meeting!
@@ -85,7 +89,7 @@ export function ShareLink() {
         </div>
 
         <div className={styles.linkBox}>
-          <span className={styles.linkText}>{respondUrl}</span>
+          <span className={styles.linkText}>{displayUrl}</span>
           <button className={`${styles.copyBtn} ${copied ? styles.copyBtnDone : ''}`} onClick={copyLink}>
             {copied ? <><Icon name="check" size={13} /> 복사됨</> : '복사'}
           </button>

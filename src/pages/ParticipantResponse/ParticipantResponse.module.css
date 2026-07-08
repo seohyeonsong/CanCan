@@ -143,6 +143,7 @@
 /* 주최자 건너뛰기 — 다른 성격의 액션이라 색 구분(흰 배경+테두리) */
 .whoSkip {
   flex-shrink: 0;
+  margin-left: auto;
   font-size: 12px;
   font-weight: 700;
   color: var(--color-grey-600);
@@ -153,6 +154,22 @@
   white-space: nowrap;
 }
 .whoSkip:hover { background: var(--color-grey-100); color: var(--color-grey-800); }
+
+/* 링크 복원 데모 안내 (Constraint Guidance) */
+.syncNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #fffbeb;
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: #92400e;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.syncNote b { font-weight: 800; }
+.syncNote svg { flex-shrink: 0; margin-top: 2px; }
 
 .stepTitle {
   font-size: 18px;

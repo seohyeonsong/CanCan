@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting, unconfirmMeeting } from '../../lib/store'
 import { shareOrCopy } from '../../lib/share'
+import { buildRespondUrl } from '../../lib/meetingLink'
 import { buildGoogleCalendarUrl } from '../../lib/calendarLink'
 import { Logo } from '../../components/Logo/Logo'
 import { Icon, formatMeta } from '../../components/Icon/Icon'
@@ -51,12 +52,12 @@ export function Confirmation() {
     ]
     if (formatStr) lines.push(`${formatStr}`)
     if (respondedNames.length > 0) lines.push(`👥 참석: ${respondedNames.join(', ')}`)
-    lines.push(``, `🔗 ${window.location.origin}/meeting/${id}/respond`)
+    lines.push(``, `🔗 ${buildRespondUrl(meeting!)}`)
     return lines.join('\n')
   }
 
   function handleShare() {
-    shareOrCopy(buildSlackMessage(), `${window.location.origin}/meeting/${id}/respond`).then(res => {
+    shareOrCopy(buildSlackMessage(), buildRespondUrl(meeting!)).then(res => {
       if (res === 'cancelled') return
       setShareResult(res)
       setTimeout(() => setShareResult(null), 2000)

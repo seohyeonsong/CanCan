@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting, confirmMeeting, submitResponse, addParticipant, removeParticipant } from '../../lib/store'
 import { shareOrCopy } from '../../lib/share'
+import { buildRespondUrl } from '../../lib/meetingLink'
 import { getUser, clearUser } from '../../lib/auth'
 import { getRecommendations, getDateRange } from '../../lib/algorithm'
 import { RecommendationCard } from '../../components/RecommendationCard/RecommendationCard'
@@ -79,7 +80,8 @@ export function OrganizerDashboard() {
   const responded = meeting.participants.filter(p => p.submittedAt !== null)
   const requiredNames = meeting.participants.filter(p => p.isRequired).map(p => p.name)
   const pending = meeting.participants.filter(p => p.submittedAt === null)
-  const respondUrl = `${window.location.origin}/meeting/${id}/respond`
+  // 회의 스냅샷을 링크에 담아, 받은 사람이 다른 기기에서 열어도 복원되게 한다
+  const respondUrl = buildRespondUrl(meeting)
   const dates = getDateRange(meeting.dateRange.start, meeting.dateRange.end)
 
   // 주최자 응답 그리드에도 다른 참여자 가능 시간을 히트맵으로 겹쳐 보여준다

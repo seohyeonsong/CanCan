@@ -173,6 +173,15 @@ export function createMeeting(data: {
   return meeting
 }
 
+// 링크로 전달받은 회의 스냅샷 저장 (기존 데이터가 없을 때만 — 원본을 덮지 않음)
+export function importMeeting(meeting: Meeting): void {
+  const meetings = load()
+  if (!meetings[meeting.id]) {
+    meetings[meeting.id] = meeting
+    save(meetings)
+  }
+}
+
 export function getMeeting(id: string): Meeting | null {
   const meetings = load()
   return meetings[id] ?? null
