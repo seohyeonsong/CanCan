@@ -24,6 +24,7 @@ export function CreateMeeting() {
   const user = getUser()
   const [title, setTitle] = useState('')
   const [organizerName, setOrganizerName] = useState(user?.name ?? '')
+  const [orgTouched, setOrgTouched] = useState(false)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [duration, setDuration] = useState(60)
@@ -111,9 +112,10 @@ export function CreateMeeting() {
             <input
               className={`${styles.input} ${errors.organizerName ? styles.inputError : ''}`}
               type="text"
-              placeholder="송서현"
+              placeholder="김토스 A"
               value={organizerName}
-              onChange={e => { setOrganizerName(e.target.value); setErrors(p => ({...p, organizerName: ''})) }}
+              onFocus={() => { if (!orgTouched) { setOrgTouched(true); setOrganizerName('') } }}
+              onChange={e => { setOrgTouched(true); setOrganizerName(e.target.value); setErrors(p => ({...p, organizerName: ''})) }}
             />
             {errors.organizerName && <p className={styles.errorMsg}>{errors.organizerName}</p>}
           </div>
