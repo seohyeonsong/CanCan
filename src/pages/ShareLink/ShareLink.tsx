@@ -56,6 +56,7 @@ export function ShareLink() {
 
   function shareInvite() {
     shareOrCopy(buildInviteMessage(), respondUrl).then(res => {
+      if (res === 'cancelled') return
       setShareResult(res)
       setTimeout(() => setShareResult(null), 2000)
     })

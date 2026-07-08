@@ -164,7 +164,8 @@ export function OrganizerDashboard() {
     shareOrCopy(msg, respondUrl).then(res => flash(res))
   }
 
-  function flash(res: 'shared' | 'copied') {
+  function flash(res: 'shared' | 'copied' | 'cancelled') {
+    if (res === 'cancelled') return
     setShareToast(res === 'copied' ? '메시지가 복사됐어요' : '공유했어요')
     setTimeout(() => setShareToast(null), 2000)
   }

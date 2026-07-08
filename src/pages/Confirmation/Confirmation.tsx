@@ -57,6 +57,7 @@ export function Confirmation() {
 
   function handleShare() {
     shareOrCopy(buildSlackMessage(), `${window.location.origin}/meeting/${id}/respond`).then(res => {
+      if (res === 'cancelled') return
       setShareResult(res)
       setTimeout(() => setShareResult(null), 2000)
     })
