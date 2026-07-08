@@ -435,7 +435,18 @@
 .demoCalNote b { color: var(--color-grey-700); }
 
 /* 온·오프라인 참여 방식 선택 (그리드 단계) */
-.formatPick { display: flex; flex-direction: column; gap: 8px; }
+.formatPick { display: flex; flex-direction: column; gap: 8px; scroll-margin-top: 80px; border-radius: 12px; transition: box-shadow 300ms, background 300ms; }
+.formatPickHighlight {
+  background: var(--color-primary-light);
+  box-shadow: 0 0 0 2px var(--color-primary-200);
+  padding: 12px;
+  margin: -12px;
+  animation: formatPulse 1.8s ease;
+}
+@keyframes formatPulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--color-primary-200); }
+  30% { box-shadow: 0 0 0 4px rgba(49,130,246,0.35); }
+}
 .formatPickLabel { font-size: 13px; font-weight: 600; color: var(--color-grey-700); }
 .formatPickRow { display: flex; gap: 8px; }
 .formatPickBtn {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { getMeeting, submitResponse, addParticipant } from '../../lib/store'
 import { buildGoogleCalendarUrl } from '../../lib/calendarLink'
@@ -29,7 +29,9 @@ export function ParticipantResponse() {
   const [name, setName] = useState('')
   const [contact, setContact] = useState('')
   const [preferences, setPreferences] = useState<Record<string, Preference>>({})
-  const [formatPreference, setFormatPreference] = useState<'online' | 'offline' | 'both'>('both')
+  const [formatPreference, setFormatPreference] = useState<'online' | 'offline' | 'both' | null>(null)
+  const [highlightFormat, setHighlightFormat] = useState(false)
+  const formatRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (id) setMeeting(getMeeting(id))
@@ -112,11 +114,23 @@ export function ParticipantResponse() {
     setStep(fresh?.confirmedSlot ? 'name' : 'pending')
   }
 
+  // 제출 버튼 클릭 — 참여방식 미선택이면 제출 대신 그쪽으로 스크롤/강조
+  function handleSubmitClick() {
+    if (markedCount === 0) return
+    if (meeting!.format === 'both' && !formatPreference) {
+      formatRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      setHighlightFormat(true)
+      setTimeout(() => setHighlightFormat(false), 1800)
+      return
+    }
+    handleSubmit()
+  }
+
   function handleSubmit() {
     if (!id || !name.trim() || !meeting || markedCount === 0) return
     const loggedInUser = getUser()
     addParticipant(id, name.trim(), false, contact.trim() || undefined, loggedInUser?.email)
-    const fp = meeting.format === 'both' ? formatPreference : undefined
+    const fp = meeting.format === 'both' ? (formatPreference ?? undefined) : undefined
     submitResponse(id, name.trim(), preferences, fp)
     setStep('done')
   }
@@ -210,6 +224,7 @@ export function ParticipantResponse() {
                               setName(p.name)
                               setContact(p.contact ?? '')
                               setPreferences(existing?.preferences ?? {})
+                              setFormatPreference(existing?.formatPreference ?? null)
                               setStep('grid')
                             }}
                           >
@@ -324,7 +339,7 @@ export function ParticipantResponse() {
           />
 
           {meeting.format === 'both' && (
-            <div className={styles.formatPick}>
+            <div ref={formatRef} className={`${styles.formatPick} ${highlightFormat ? styles.formatPickHighlight : ''}`}>
               <p className={styles.formatPickLabel}>이 회의, 어떻게 참여하실 예정인가요?</p>
               <div className={styles.formatPickRow}>
                 {([
@@ -347,8 +362,12 @@ export function ParticipantResponse() {
           )}
 
           <div className={styles.floatBar}>
-            <button className={styles.floatSubmit} onClick={handleSubmit} disabled={markedCount === 0}>
-              {markedCount === 0 ? '가능한 시간을 1개 이상 표시해주세요' : '제출하기'}
+            <button className={styles.floatSubmit} onClick={handleSubmitClick} disabled={markedCount === 0}>
+              {markedCount === 0
+                ? '가능한 시간을 1개 이상 표시해주세요'
+                : (meeting.format === 'both' && !formatPreference)
+                ? '참여 방식 선택하기'
+                : '제출하기'}
             </button>
           </div>
         </div>
