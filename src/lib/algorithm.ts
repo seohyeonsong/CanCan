@@ -102,6 +102,7 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
       const blockedNames: string[] = []
       const onlineNames: string[] = []
       const offlineNames: string[] = []
+      const flexibleNames: string[] = []
 
       for (const p of respondedParticipants) {
         const blocked = keys.some(key => (p.preferences[key] ?? 'no') === 'no')
@@ -109,6 +110,8 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
           blockedNames.push(p.name)
         } else {
           availableNames.push(p.name)
+          // 이 시간대에 '조율 가능'으로 응답한 사람 (확정 전 확인 필요)
+          if (keys.some(key => p.preferences[key] === 'flexible')) flexibleNames.push(p.name)
           const fp = p.formatPreference ?? 'both'
           if (fp === 'online') onlineNames.push(p.name)
           else if (fp === 'offline') offlineNames.push(p.name)
@@ -120,7 +123,6 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
       if (availableNames.length === 0) continue
 
       const tags: string[] = []
-      if (flexibleCount > 0) tags.push(`조율 필요 ${flexibleCount}명`)
 
       candidates.push({
         slot: { date, hour: startSlot.hour, minute: startSlot.minute },
@@ -133,6 +135,7 @@ export function getRecommendations(meeting: Meeting): Recommendation[] {
         blockedNames,
         onlineNames,
         offlineNames,
+        flexibleNames,
       })
     }
   }

@@ -43,6 +43,7 @@ export interface Recommendation {
   requiredCount: number
   optionalCount: number
   flexibleCount: number
+  flexibleNames: string[]
   tags: string[]
   availableNames: string[]   // 가능한 참여자 이름
   blockedNames: string[]     // 불가능한 참여자 이름

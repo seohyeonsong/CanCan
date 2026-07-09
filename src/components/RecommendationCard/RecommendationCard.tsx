@@ -33,8 +33,9 @@ function getTagColor(tag: string): 'blue' | 'green' | 'orange' | 'yellow' | 'gre
 }
 
 export function RecommendationCard({ recommendation, rank, onConfirm, onCoordinate, isSelected, confirmContent, requiredNames = [] }: RecommendationCardProps) {
-  const { slot, tags, flexibleCount, availableNames, blockedNames } = recommendation
+  const { slot, tags, availableNames, blockedNames, flexibleNames } = recommendation
   const isReq = (n: string) => requiredNames.includes(n)
+  const isFlex = (n: string) => flexibleNames.includes(n)
   const isTop = rank === 1
   const total = availableNames.length + blockedNames.length
   const allAvailable = blockedNames.length === 0 && availableNames.length > 0
@@ -45,9 +46,6 @@ export function RecommendationCard({ recommendation, rank, onConfirm, onCoordina
       <div className={styles.content}>
         <div className={styles.slotRow}>
           <span className={styles.slotText}>{formatSlot(slot.date, slot.hour, slot.minute)}</span>
-          {flexibleCount > 0 && (
-            <span className={styles.flexNote}>DM 확인 필요</span>
-          )}
         </div>
         {total > 0 && (
           <div className={`${styles.summary} ${allAvailable ? styles.summaryAll : ''}`}>
@@ -65,9 +63,10 @@ export function RecommendationCard({ recommendation, rank, onConfirm, onCoordina
                 const isOnlineOnly = recommendation.onlineNames.includes(n)
                 const isOfflineOnly = recommendation.offlineNames.includes(n)
                 return (
-                  <span key={n} className={`${styles.nameChip} ${styles.nameChipOk}`}>
+                  <span key={n} className={`${styles.nameChip} ${isFlex(n) ? styles.nameChipFlex : styles.nameChipOk}`}>
                     {isReq(n) && <span className={styles.reqDot} title="필수 참석자" />}
                     {n}
+                    {isFlex(n) && <span className={styles.formatTag}><Icon name="refresh" size={11} /></span>}
                     {isOnlineOnly && <span className={styles.formatTag}><Icon name="monitor" size={12} /></span>}
                     {isOfflineOnly && <span className={styles.formatTag}><Icon name="pin" size={12} /></span>}
                   </span>
@@ -87,6 +86,11 @@ export function RecommendationCard({ recommendation, rank, onConfirm, onCoordina
             </div>
           )}
         </div>
+        {flexibleNames.length > 0 && (
+          <p className={styles.flexLine}>
+            <Icon name="refresh" size={12} /> {flexibleNames.join(', ')}님은 ‘조율 가능’으로 응답했어요 — 확정 전에 한 번 확인해보세요
+          </p>
+        )}
         {tags.length > 0 && (
           <div className={styles.tags}>
             {tags.map(tag => (

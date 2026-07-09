@@ -117,6 +117,24 @@
   gap: 3px;
 }
 
+/* '조율 가능'으로 응답한 사람 — 앰버로 구분 */
+.nameChipFlex {
+  background: #fef3c7;
+  color: #92400e;
+  gap: 3px;
+}
+
+.flexLine {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #b45309;
+  line-height: 1.5;
+}
+.flexLine svg { flex-shrink: 0; margin-top: 2px; }
+
 .formatTag {
   font-size: 10px;
   line-height: 1;
