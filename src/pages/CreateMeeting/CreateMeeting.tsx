@@ -45,10 +45,18 @@ export function CreateMeeting() {
   const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 
   function addParticipant() {
-    if (!newName.trim()) return
-    setParticipants(prev => [...prev, { name: newName.trim(), contact: newContact.trim() || undefined, isRequired: newIsRequired }])
+    const nm = newName.trim()
+    if (!nm) return
+    // 같은 이름(주최자 포함)이 이미 있으면 막고 안내 — 동명이인은 구분 표시 유도
+    const taken = nm === organizerName.trim() || participants.some(p => p.name === nm)
+    if (taken) {
+      setErrors(p => ({ ...p, newName: `이미 '${nm}'이(가) 있어요. 구분해서 적어주세요 (예: ${nm} B)` }))
+      return
+    }
+    setParticipants(prev => [...prev, { name: nm, contact: newContact.trim() || undefined, isRequired: newIsRequired }])
     setNewName('')
     setNewContact('')
+    setErrors(p => ({ ...p, newName: '' }))
   }
 
   function removeParticipant(index: number) {
@@ -61,6 +69,7 @@ export function CreateMeeting() {
     const newErrors: Record<string, string> = {}
     if (!title.trim()) newErrors.title = '회의 이름을 입력해주세요'
     if (!organizerName.trim()) newErrors.organizerName = '주최자 이름을 입력해주세요'
+    else if (participants.some(p => p.name === organizerName.trim())) newErrors.organizerName = '참여자와 같은 이름이에요. 구분해서 적어주세요'
     if (!startDate) newErrors.startDate = '시작일을 선택해주세요'
     else if (new Date(startDate) < today) newErrors.startDate = '오늘 이후 날짜를 선택해주세요'
     if (!endDate) newErrors.endDate = '종료일을 선택해주세요'
@@ -223,13 +232,14 @@ export function CreateMeeting() {
 
           <div className={styles.participantInput}>
             <input
-              className={styles.input}
+              className={`${styles.input} ${errors.newName ? styles.inputError : ''}`}
               type="text"
               placeholder="이름 (예: 김토스 B)"
               value={newName}
-              onChange={e => setNewName(e.target.value)}
+              onChange={e => { setNewName(e.target.value); setErrors(p => ({...p, newName: ''})) }}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addParticipant() } }}
             />
+            {errors.newName && <p className={styles.errorMsg}>{errors.newName}</p>}
             <input
               className={styles.input}
               type="text"
