@@ -35,6 +35,7 @@ export interface Meeting {
   participants: ParticipantResponse[]
   createdAt: string
   confirmedSlot: TimeSlot | null
+  organizerAttending?: boolean   // false면 주최자는 이 회의에 참석 안 함(건너뛰기)
 }
 
 export interface Recommendation {

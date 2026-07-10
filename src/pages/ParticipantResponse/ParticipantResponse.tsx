@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { getMeeting, submitResponse, addParticipant, importMeeting } from '../../lib/store'
+import { getMeeting, submitResponse, addParticipant, importMeeting, setOrganizerAttending } from '../../lib/store'
 import { meetingFromHash } from '../../lib/meetingLink'
 import { buildGoogleCalendarUrl } from '../../lib/calendarLink'
 import { TimeGrid } from '../../components/TimeGrid/TimeGrid'
@@ -168,7 +168,7 @@ export function ParticipantResponse() {
     addParticipant(id, name.trim(), isOrganizerSetup, contact.trim() || undefined, loggedInUser?.email)
     const fp = meeting.format === 'both' ? (formatPreference ?? undefined) : undefined
     submitResponse(id, name.trim(), preferences, fp)
-    if (isOrganizerSetup) { navigate(`/meeting/${id}/share`); return }
+    if (isOrganizerSetup) { setOrganizerAttending(id, true); navigate(`/meeting/${id}/share`); return }
     setStep('done')
   }
 
@@ -199,7 +199,7 @@ export function ParticipantResponse() {
             <b>{name}</b>님{isOrganizerSetup ? '(주최자)' : '으로 응답 중'}
           </span>
           {isOrganizerSetup ? (
-            <button className={styles.whoSkip} onClick={() => navigate(`/meeting/${id}/share`)}>참석 안 해요, 건너뛰기 ›</button>
+            <button className={styles.whoSkip} onClick={() => { if (id) setOrganizerAttending(id, false); navigate(`/meeting/${id}/share`) }}>참석 안 해요, 건너뛰기 ›</button>
           ) : (
             <button className={styles.whoEdit} onClick={() => setStep('name')}>이름 수정</button>
           )}

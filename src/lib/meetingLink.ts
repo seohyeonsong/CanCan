@@ -10,6 +10,7 @@ interface SlimMeeting {
   f?: string; l?: string; s: string; d: string
   dur: number; dl?: string
   c?: { date: string; hour: number; minute: number } | null
+  oa?: boolean
   p: [string, 0 | 1][]  // [이름, 필수여부]
 }
 
@@ -18,6 +19,7 @@ export function encodeMeeting(meeting: Meeting): string {
     id: meeting.id, t: meeting.title, o: meeting.organizerName, e: meeting.ownerEmail,
     f: meeting.format, l: meeting.location, s: meeting.dateRange.start, d: meeting.dateRange.end,
     dur: meeting.durationMinutes, dl: meeting.responseDeadline, c: meeting.confirmedSlot,
+    oa: meeting.organizerAttending,
     p: meeting.participants.map(x => [x.name, x.isRequired ? 1 : 0]),
   }
   const bytes = new TextEncoder().encode(JSON.stringify(slim))
@@ -46,6 +48,7 @@ export function decodeMeeting(param: string): Meeting | null {
       durationMinutes: m.dur,
       responseDeadline: m.dl,
       confirmedSlot: m.c ? { date: m.c.date, hour: m.c.hour, minute: (m.c.minute === 30 ? 30 : 0) } : null,
+      organizerAttending: m.oa,
       createdAt: new Date().toISOString(),
       participants: m.p.map(([name, req]) => ({
         name, isRequired: req === 1, preferences: {}, submittedAt: null,

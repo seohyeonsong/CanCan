@@ -207,6 +207,15 @@ export function getMeeting(id: string): Meeting | null {
   return meetings[id] ?? null
 }
 
+// 주최자 참석 여부 설정 (건너뛰기=false, 응답=true)
+export function setOrganizerAttending(meetingId: string, attending: boolean): void {
+  const meetings = load()
+  const meeting = meetings[meetingId]
+  if (!meeting) return
+  meeting.organizerAttending = attending
+  save(meetings)
+}
+
 export function submitResponse(
   meetingId: string,
   participantName: string,

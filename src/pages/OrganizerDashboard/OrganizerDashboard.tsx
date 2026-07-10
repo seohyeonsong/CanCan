@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getMeeting, confirmMeeting, submitResponse, addParticipant, removeParticipant } from '../../lib/store'
+import { getMeeting, confirmMeeting, submitResponse, addParticipant, removeParticipant, setOrganizerAttending } from '../../lib/store'
 import { shareOrCopy } from '../../lib/share'
 import { buildRespondUrl } from '../../lib/meetingLink'
 import { getUser, clearUser } from '../../lib/auth'
@@ -82,9 +82,11 @@ export function OrganizerDashboard() {
   const requiredNames = meeting.participants.filter(p => p.isRequired).map(p => p.name)
   const pending = meeting.participants.filter(p => p.submittedAt === null)
 
-  // 주최자도 참석자 — 응답 전이라 participants에 없어도 자판기/카운트엔 항상 표시
+  // 주최자도 참석자 — 응답 전이라 participants에 없어도 자판기/카운트엔 항상 표시.
+  // 단, 주최자가 '참석 안 함'을 선택했으면 목록에서 제외한다.
   const organizerInList = meeting.participants.some(p => p.name === meeting.organizerName)
-  const roster = organizerInList
+  const organizerSkipped = meeting.organizerAttending === false
+  const roster = (organizerInList || organizerSkipped)
     ? meeting.participants
     : [{ name: meeting.organizerName, isRequired: true, preferences: {}, submittedAt: null }, ...meeting.participants]
   const rosterResponded = roster.filter(p => p.submittedAt !== null).length
@@ -195,6 +197,7 @@ export function OrganizerDashboard() {
     if (!id || !meeting || organizerMarkedCount === 0) return
     addParticipant(id, meeting.organizerName, true)
     submitResponse(id, meeting.organizerName, preferences)
+    setOrganizerAttending(id, true)
     setSubmitted(true)
     refresh()
     setTab('dashboard')
