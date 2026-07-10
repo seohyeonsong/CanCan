@@ -45,7 +45,7 @@ export function decodeMeeting(param: string): Meeting | null {
       dateRange: { start: m.s, end: m.d },
       durationMinutes: m.dur,
       responseDeadline: m.dl,
-      confirmedSlot: m.c ?? null,
+      confirmedSlot: m.c ? { date: m.c.date, hour: m.c.hour, minute: (m.c.minute === 30 ? 30 : 0) } : null,
       createdAt: new Date().toISOString(),
       participants: m.p.map(([name, req]) => ({
         name, isRequired: req === 1, preferences: {}, submittedAt: null,

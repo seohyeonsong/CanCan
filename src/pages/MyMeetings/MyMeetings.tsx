@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getUser, clearUser } from '../../lib/auth'
-import { getMyMeetings } from '../../lib/store'
+import { getMyMeetings, seedDemoMeeting } from '../../lib/store'
 import { Logo } from '../../components/Logo/Logo'
 import { Icon } from '../../components/Icon/Icon'
 import type { Meeting } from '../../types'
@@ -48,6 +48,8 @@ export function MyMeetings() {
 
   useEffect(() => {
     if (!user) { navigate('/login'); return }
+    // 홈 진입 시에도 데모 시드를 최신 버전으로 보장 (이미 로그인된 세션도 갱신)
+    seedDemoMeeting(user.email)
     setMeetings(getMyMeetings(user.email))
   }, [navigate, user?.email])
 
