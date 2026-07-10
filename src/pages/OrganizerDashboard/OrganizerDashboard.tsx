@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getMeeting, confirmMeeting, submitResponse, addParticipant, removeParticipant, setOrganizerAttending } from '../../lib/store'
 import { shareOrCopy } from '../../lib/share'
@@ -49,6 +49,16 @@ export function OrganizerDashboard() {
   const [newRequired, setNewRequired] = useState(true)
   const [addError, setAddError] = useState('')
   const [shareToast, setShareToast] = useState<string | null>(null)
+  const popupCloseTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  function openPopup(name: string) {
+    if (popupCloseTimer.current) clearTimeout(popupCloseTimer.current)
+    setHoveredParticipant(name)
+  }
+  function scheduleClosePopup() {
+    if (popupCloseTimer.current) clearTimeout(popupCloseTimer.current)
+    popupCloseTimer.current = setTimeout(() => setHoveredParticipant(null), 260)
+  }
 
   function refresh() {
     if (!id) return
@@ -62,6 +72,11 @@ export function OrganizerDashboard() {
     const interval = setInterval(refresh, 5000)
     return () => clearInterval(interval)
   }, [id])
+  useEffect(() => {
+    return () => {
+      if (popupCloseTimer.current) clearTimeout(popupCloseTimer.current)
+    }
+  }, [])
 
   // 타임그리드 초기값 세팅 — 회의 id가 바뀔 때 1회만 (드래그 입력이 새로고침에 지워지지 않도록)
   useEffect(() => {
@@ -309,13 +324,17 @@ export function OrganizerDashboard() {
                     <div
                       key={p.name}
                       className={styles.canSlot}
-                      onMouseEnter={() => setHoveredParticipant(p.name)}
-                      onMouseLeave={() => setHoveredParticipant(null)}
-                      onClick={() => setHoveredParticipant(prev => prev === p.name ? null : p.name)}
+                      onMouseEnter={() => openPopup(p.name)}
+                      onMouseLeave={scheduleClosePopup}
+                      onClick={() => hoveredParticipant === p.name ? scheduleClosePopup() : openPopup(p.name)}
                     >
                       <CanIcon name={p.name} size={64} pending={!p.submittedAt} colorIndex={i} required={p.isRequired} />
                       {hoveredParticipant === p.name && (
-                        <div className={styles.participantPopup}>
+                        <div
+                          className={styles.participantPopup}
+                          onMouseEnter={() => openPopup(p.name)}
+                          onMouseLeave={scheduleClosePopup}
+                        >
                           <span className={styles.popupName}>{p.name}{p.name === meeting.organizerName && ' (주최자)'}</span>
                           {p.contact && <span className={styles.popupContact}>{p.contact}</span>}
                           <span className={styles.popupStatus}>{p.submittedAt ? <><Icon name="check" size={12} /> 응답 완료</> : '응답 대기'}</span>
