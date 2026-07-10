@@ -28,7 +28,7 @@ function localDateStr(d: Date): string {
 }
 
 // 시드 데이터 스키마 버전 — 응답 모델이 바뀌면 올려서 기존 브라우저도 갱신
-const SEED_VERSION = '3'
+const SEED_VERSION = '4'
 
 // 심사/데모용: 응답이 모두 모인 현실적인 회의를 1개 시딩한다.
 // 날짜는 접속 시점 기준으로 생성해 항상 "다가오는 회의"로 보이게 한다.
@@ -123,6 +123,26 @@ export function seedDemoMeeting(ownerEmail: string): string {
   }
 
   meetings[DEMO_ID] = meeting
+
+  // 확정 완료 상태 데모 — 심사자가 "확정 후(취소·공유·캘린더)" 흐름도 바로 보게
+  meetings['demo-confirmed'] = {
+    id: 'demo-confirmed',
+    title: '디자인 시스템 리뷰',
+    organizerName: '데모 사용자',
+    ownerEmail,
+    format: 'online',
+    location: 'Google Meet',
+    dateRange: { start: d1, end: d3 },
+    durationMinutes: 60,
+    participants: [
+      { name: '김지훈', isRequired: true, formatPreference: 'online', preferences: marks([[d2, 15, 0, 'good'], [d2, 15, 30, 'good']]), submittedAt: now },
+      { name: '이민아', isRequired: true, formatPreference: 'online', preferences: marks([[d2, 15, 0, 'good'], [d2, 15, 30, 'good']]), submittedAt: now },
+      { name: '박수빈', isRequired: false, formatPreference: 'online', preferences: marks([[d2, 15, 0, 'okay'], [d2, 15, 30, 'okay']]), submittedAt: now },
+    ],
+    createdAt: now,
+    confirmedSlot: { date: d2, hour: 15, minute: 0 },
+  }
+
   save(meetings)
   localStorage.setItem('cancan_seed_v', SEED_VERSION)
   return DEMO_ID
