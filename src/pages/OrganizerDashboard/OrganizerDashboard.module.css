@@ -863,3 +863,13 @@
   margin-top: -8px;
 }
 .demoLimitNote svg { flex-shrink: 0; margin-top: 2px; }
+
+/* 참여자 추가 - 동명이인 에러 */
+.addInputError { border-color: #ef4444 !important; }
+.addErrorMsg {
+  margin: 8px 2px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #dc2626;
+  line-height: 1.4;
+}

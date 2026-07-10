@@ -47,6 +47,7 @@ export function OrganizerDashboard() {
   const [showAdd, setShowAdd] = useState(false)
   const [newName, setNewName] = useState('')
   const [newRequired, setNewRequired] = useState(true)
+  const [addError, setAddError] = useState('')
   const [shareToast, setShareToast] = useState<string | null>(null)
 
   function refresh() {
@@ -95,9 +96,16 @@ export function OrganizerDashboard() {
   }
 
   function handleAddParticipant() {
-    if (!id || !newName.trim()) return
-    addParticipant(id, newName.trim(), newRequired)
+    if (!id || !meeting || !newName.trim()) return
+    const nm = newName.trim()
+    // 같은 이름(주최자 포함)이 이미 있으면 막고 안내 — 동명이인은 구분 표시 유도
+    if (nm === meeting.organizerName || meeting.participants.some(p => p.name === nm)) {
+      setAddError(`이미 '${nm}'이(가) 있어요. 구분해서 적어주세요 (예: ${nm} B)`)
+      return
+    }
+    addParticipant(id, nm, newRequired)
     setNewName('')
+    setAddError('')
     setShowAdd(false)
     refresh()
   }
@@ -336,22 +344,25 @@ export function OrganizerDashboard() {
               {!showAdd ? (
                 <button className={styles.addToggle} onClick={() => setShowAdd(true)}>+ 참여자 추가</button>
               ) : (
-                <div className={styles.addForm}>
-                  <input
-                    className={styles.addInput}
-                    placeholder="이름 (예: 김토스 B)"
-                    value={newName}
-                    autoFocus
-                    onChange={e => setNewName(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleAddParticipant()}
-                  />
-                  <label className={styles.addReq}>
-                    <input type="checkbox" checked={newRequired} onChange={e => setNewRequired(e.target.checked)} />
-                    필수
-                  </label>
-                  <button className={styles.addConfirm} onClick={handleAddParticipant} disabled={!newName.trim()}>추가</button>
-                  <button className={styles.addCancel} onClick={() => { setShowAdd(false); setNewName('') }}>취소</button>
-                </div>
+                <>
+                  <div className={styles.addForm}>
+                    <input
+                      className={`${styles.addInput} ${addError ? styles.addInputError : ''}`}
+                      placeholder="이름 (예: 김토스 B)"
+                      value={newName}
+                      autoFocus
+                      onChange={e => { setNewName(e.target.value); setAddError('') }}
+                      onKeyDown={e => e.key === 'Enter' && handleAddParticipant()}
+                    />
+                    <label className={styles.addReq}>
+                      <input type="checkbox" checked={newRequired} onChange={e => setNewRequired(e.target.checked)} />
+                      필수
+                    </label>
+                    <button className={styles.addConfirm} onClick={handleAddParticipant} disabled={!newName.trim()}>추가</button>
+                    <button className={styles.addCancel} onClick={() => { setShowAdd(false); setNewName(''); setAddError('') }}>취소</button>
+                  </div>
+                  {addError && <p className={styles.addErrorMsg}>{addError}</p>}
+                </>
               )}
             </div>
           </section>
