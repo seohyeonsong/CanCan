@@ -81,6 +81,14 @@ export function OrganizerDashboard() {
   const responded = meeting.participants.filter(p => p.submittedAt !== null)
   const requiredNames = meeting.participants.filter(p => p.isRequired).map(p => p.name)
   const pending = meeting.participants.filter(p => p.submittedAt === null)
+
+  // 주최자도 참석자 — 응답 전이라 participants에 없어도 자판기/카운트엔 항상 표시
+  const organizerInList = meeting.participants.some(p => p.name === meeting.organizerName)
+  const roster = organizerInList
+    ? meeting.participants
+    : [{ name: meeting.organizerName, isRequired: true, preferences: {}, submittedAt: null }, ...meeting.participants]
+  const rosterResponded = roster.filter(p => p.submittedAt !== null).length
+  const rosterPending = roster.length - rosterResponded
   // 회의 스냅샷을 링크에 담아, 받은 사람이 다른 기기에서 열어도 복원되게 한다
   const respondUrl = buildRespondUrl(meeting)
   const dates = getDateRange(meeting.dateRange.start, meeting.dateRange.end)
@@ -217,7 +225,7 @@ export function OrganizerDashboard() {
         <div className={styles.meetingMeta}>
           <h2 className={styles.meetingTitle}>
             {meeting.title}
-            {id === 'demo-kickoff' && <span className={styles.titleDemoBadge}>데모</span>}
+            {id?.startsWith('demo-') && <span className={styles.titleDemoBadge}>데모</span>}
           </h2>
           <p className={styles.meta}>
             {formatDate(meeting.dateRange.start)} ~ {formatDate(meeting.dateRange.end)} · {meeting.durationMinutes}분
@@ -284,17 +292,17 @@ export function OrganizerDashboard() {
               <img src="/whitelogo.png" alt="CanCan" className={styles.machineLogoImg} />
               <div className={styles.machineStatusPanel}>
                 <span className={styles.statusLed} />
-                <span className={styles.statusReadout}>{responded.length}/{meeting.participants.length} READY</span>
+                <span className={styles.statusReadout}>{rosterResponded}/{roster.length} READY</span>
               </div>
             </div>
 
             {/* 캔 진열 */}
             <div className={styles.machineDisplay}>
-              {meeting.participants.length === 0 ? (
+              {roster.length === 0 ? (
                 <div className={styles.emptyDisplay}><p>링크를 공유해 참여자를 모아보세요</p></div>
               ) : (
                 <div className={styles.canRow}>
-                  {meeting.participants.map((p, i) => (
+                  {roster.map((p, i) => (
                     <div
                       key={p.name}
                       className={styles.canSlot}
@@ -305,20 +313,22 @@ export function OrganizerDashboard() {
                       <CanIcon name={p.name} size={64} pending={!p.submittedAt} colorIndex={i} required={p.isRequired} />
                       {hoveredParticipant === p.name && (
                         <div className={styles.participantPopup}>
-                          <span className={styles.popupName}>{p.name}</span>
+                          <span className={styles.popupName}>{p.name}{p.name === meeting.organizerName && ' (주최자)'}</span>
                           {p.contact && <span className={styles.popupContact}>{p.contact}</span>}
                           <span className={styles.popupStatus}>{p.submittedAt ? <><Icon name="check" size={12} /> 응답 완료</> : '응답 대기'}</span>
-                          <button
-                            className={styles.popupRemove}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              if (id && confirm(`${p.name}님을 이 회의에서 제외할까요?`)) {
-                                removeParticipant(id, p.name)
-                                setHoveredParticipant(null)
-                                refresh()
-                              }
-                            }}
-                          >참여자 제외</button>
+                          {p.name !== meeting.organizerName && (
+                            <button
+                              className={styles.popupRemove}
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                if (id && confirm(`${p.name}님을 이 회의에서 제외할까요?`)) {
+                                  removeParticipant(id, p.name)
+                                  setHoveredParticipant(null)
+                                  refresh()
+                                }
+                              }}
+                            >참여자 제외</button>
+                          )}
                         </div>
                       )}
                     </div>
@@ -329,12 +339,14 @@ export function OrganizerDashboard() {
 
             {/* 상태 푸터 */}
             <div className={styles.machineMessagePanel}>
-              {pending.length === 0 ? (
+              {rosterPending === 0 ? (
                 <span className={styles.messageText}>● 참여자 모두 응답했어요</span>
               ) : (
                 <>
-                  <span className={styles.messageText}>● {pending.length}명 응답 대기 중</span>
-                  <button className={styles.resendBtn} onClick={shareNudge}><Icon name="message" size={13} /> 응답 재촉</button>
+                  <span className={styles.messageText}>● {rosterPending}명 응답 대기 중</span>
+                  {pending.length > 0 && (
+                    <button className={styles.resendBtn} onClick={shareNudge}><Icon name="message" size={13} /> 응답 재촉</button>
+                  )}
                 </>
               )}
             </div>
