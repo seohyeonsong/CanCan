@@ -119,6 +119,7 @@ export function OrganizerDashboard() {
       if (pref !== 'no') orgOthersCount[key] = (orgOthersCount[key] ?? 0) + 1
     }
   }
+  const orgViableKeys = orgOthersTotal > 0 ? new Set(Object.keys(orgOthersCount)) : undefined
 
   function handleAddParticipant() {
     if (!id || !meeting || !newName.trim()) return
@@ -526,6 +527,7 @@ export function OrganizerDashboard() {
             onChange={(key, pref) => setPreferences(prev => ({ ...prev, [key]: pref }))}
             othersCount={orgOthersTotal > 0 ? orgOthersCount : undefined}
             othersTotal={orgOthersTotal}
+            activeKeys={orgViableKeys}
           />
 
           <button

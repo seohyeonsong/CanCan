@@ -133,10 +133,10 @@ export function ParticipantResponse() {
   // 직접 입력한 이름이 이미 응답한 사람과 같으면 덮어쓰기 위험 → 경고
   const nameClash = !!name.trim() && meeting.participants.some(p => p.name === name.trim() && p.submittedAt)
 
-  // 나 말고 모두 응답했다면, 아무도 안 되는 칸은 골라도 소용없으니 잠근다
+  // 이미 가능한 시간이 모인 뒤에는 아무도 안 되는 회색 칸을 잠가서 드래그 혼동을 줄인다
   const pendingOthers = meeting.participants.filter(p => p.name !== name.trim() && !p.submittedAt)
   const allOthersResponded = othersTotal > 0 && pendingOthers.length === 0
-  const viableKeys = allOthersResponded ? new Set(Object.keys(othersCount)) : undefined
+  const viableKeys = othersTotal > 0 ? new Set(Object.keys(othersCount)) : undefined
 
   // "표시 안 함 = 불가" 모델이라, 가능 시간이 0개면 제출을 막는다 (빈 응답이 추천을 오염시킴)
   const markedCount = Object.values(preferences).filter(p => p !== 'no').length
@@ -356,7 +356,7 @@ export function ParticipantResponse() {
                 <div className={styles.narrowBanner}>
                   <span>이미 <b>{othersTotal}명</b>이 응답했어요</span>
                   <span className={styles.narrowSub}>
-                    {allOthersResponded ? '회색 칸은 아무도 안 되는 시간이라 잠겨 있어요' : '테두리가 진한 시간에 맞추면 조율이 빨라져요'}
+                    {allOthersResponded ? '회색 칸은 아무도 안 되는 시간이라 잠겨 있어요' : '회색 칸은 아직 가능한 사람이 없는 시간이라 잠겨 있어요'}
                   </span>
                 </div>
               </>

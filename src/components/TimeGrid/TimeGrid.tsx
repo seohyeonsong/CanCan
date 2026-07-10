@@ -79,9 +79,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
   } | null>(null)
 
   // 드래그 끝난 후 툴팁이 열려있는 동안 유지되는 선택 영역
-  const [pendingSelection, setPendingSelection] = useState<{
-    date: string; from: number; to: number
-  } | null>(null)
+  const [pendingSelection, setPendingSelection] = useState<Set<string> | null>(null)
 
   const [tooltip, setTooltip] = useState<{
     x: number; y: number; keys: string[]
@@ -89,6 +87,30 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
 
   const dragStateRef = useRef(dragState)
   dragStateRef.current = dragState
+  const preferencesRef = useRef(preferences)
+  preferencesRef.current = preferences
+  const activeKeysRef = useRef(activeKeys)
+  activeKeysRef.current = activeKeys
+  const readOnlyRef = useRef(readOnly)
+  readOnlyRef.current = readOnly
+
+  function keyAt(date: string, idx: number): string | null {
+    const slot = SLOTS[idx]
+    return slot ? slotKey(date, slot.hour, slot.minute) : null
+  }
+
+  function canInteractWithKey(key: string): boolean {
+    if (readOnlyRef.current) return false
+    const pref = preferencesRef.current[key]
+    const mine = !!pref && pref !== 'no'
+    return activeKeysRef.current === undefined || activeKeysRef.current.has(key) || mine
+  }
+
+  function selectableKeysInRange(date: string, from: number, to: number): string[] {
+    return SLOTS.slice(from, to + 1)
+      .map(s => slotKey(date, s.hour, s.minute))
+      .filter(canInteractWithKey)
+  }
 
   // Global mouseup to finish drag
   useEffect(() => {
@@ -97,10 +119,10 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
       if (!ds) return
       const from = Math.min(ds.startIdx, ds.endIdx)
       const to = Math.max(ds.startIdx, ds.endIdx)
-      const keys = SLOTS.slice(from, to + 1).map(s => slotKey(ds.date, s.hour, s.minute))
+      const keys = selectableKeysInRange(ds.date, from, to)
       setDragState(null)
       if (keys.length > 0) {
-        setPendingSelection({ date: ds.date, from, to })
+        setPendingSelection(new Set(keys))
         setTooltip({ x: e.clientX, y: e.clientY, keys })
       }
     }
@@ -124,7 +146,8 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
       e.preventDefault()  // 드래그 중 스크롤 방지
       const t = e.touches[0]
       const c = cellAt(t.clientX, t.clientY)
-      if (c && c.date === ds.date) {
+      const key = c ? keyAt(c.date, c.idx) : null
+      if (c && key && c.date === ds.date && canInteractWithKey(key)) {
         setDragState(prev => (prev ? { ...prev, endIdx: c.idx } : prev))
       }
     }
@@ -134,11 +157,11 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
       e.preventDefault()  // 합성 mouse 이벤트 억제 (툴팁 자동 닫힘 방지)
       const from = Math.min(ds.startIdx, ds.endIdx)
       const to = Math.max(ds.startIdx, ds.endIdx)
-      const keys = SLOTS.slice(from, to + 1).map(s => slotKey(ds.date, s.hour, s.minute))
+      const keys = selectableKeysInRange(ds.date, from, to)
       setDragState(null)
       const t = e.changedTouches[0]
       if (keys.length > 0) {
-        setPendingSelection({ date: ds.date, from, to })
+        setPendingSelection(new Set(keys))
         setTooltip({ x: t.clientX, y: t.clientY, keys })
       }
     }
@@ -166,7 +189,8 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
   }, [tooltip])
 
   function handleStart(date: string, idx: number) {
-    if (readOnly) return
+    const key = keyAt(date, idx)
+    if (!key || !canInteractWithKey(key)) return
     setTooltip(null)
     setPendingSelection(null)
     setDragState({ date, startIdx: idx, endIdx: idx })
@@ -179,6 +203,8 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
 
   function handleMouseEnter(date: string, idx: number) {
     if (!dragState || date !== dragState.date) return
+    const key = keyAt(date, idx)
+    if (!key || !canInteractWithKey(key)) return
     setDragState(prev => prev ? { ...prev, endIdx: idx } : prev)
   }
 
@@ -191,11 +217,13 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
 
   // 셀이 선택(하이라이트)돼야 하는지 — 드래그 중이거나 툴팁 대기 중
   function isHighlighted(date: string, idx: number): boolean {
+    const key = keyAt(date, idx)
+    if (!key || !canInteractWithKey(key)) return false
     const drag = dragState
       ? { date: dragState.date, from: Math.min(dragState.startIdx, dragState.endIdx), to: Math.max(dragState.startIdx, dragState.endIdx) }
       : null
     if (drag?.date === date && idx >= drag.from && idx <= drag.to) return true
-    if (pendingSelection?.date === date && idx >= pendingSelection.from && idx <= pendingSelection.to) return true
+    if (pendingSelection?.has(key)) return true
     return false
   }
 
@@ -255,8 +283,8 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                 const pref: Preference | undefined = preferences[key] as Preference | undefined
                 const fromCal = calendarKeys?.has(key)
                 const highlighted = isHighlighted(date, idx)
-                const inactive = activeKeys !== undefined && !activeKeys.has(key)
                 const mine = !!pref && pref !== 'no'
+                const inactive = activeKeys !== undefined && !activeKeys.has(key) && !mine
                 const others = othersCount?.[key] ?? 0
                 // 내 선택은 '채움', 남들 가능은 '스트로크(테두리)'로 구분
                 let cellBg: string | undefined
@@ -277,7 +305,7 @@ export function TimeGrid({ dates, preferences, onChange, calendarKeys, activeKey
                     data-date={date}
                     data-idx={idx}
                     className={`${styles.cell} ${s.minute === 0 ? styles.cellHourBoundary : ''} ${fromCal ? styles.cellFromCal : ''} ${highlighted ? styles.cellHighlighted : ''} ${inactive ? styles.cellInactive : ''}`}
-                    style={{ background: cellBg, boxShadow: cellShadow, cursor: interactive ? 'pointer' : 'default' }}
+                    style={{ background: cellBg, boxShadow: cellShadow, cursor: inactive ? 'not-allowed' : interactive ? 'pointer' : 'default' }}
                     onMouseDown={interactive ? e => handleMouseDown(e, date, idx) : undefined}
                     onMouseEnter={interactive ? () => handleMouseEnter(date, idx) : undefined}
                     onTouchStart={interactive ? () => handleStart(date, idx) : undefined}
