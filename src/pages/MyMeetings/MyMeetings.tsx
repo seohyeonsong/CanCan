@@ -126,7 +126,7 @@ export function MyMeetings() {
             <h3 className={styles.sectionTitle}>내가 만든 회의</h3>
             <div className={styles.list}>
               {myMeetings.map(m => (
-                <MeetingCard key={m.id} meeting={m} isOwner onClick={() => navigate(`/meeting/${m.id}/dashboard`)} />
+                <MeetingCard key={m.id} meeting={m} isOwner onClick={() => navigate(`/meeting/${m.id}/${m.confirmedSlot ? 'confirmed' : 'dashboard'}`)} />
               ))}
             </div>
           </section>
