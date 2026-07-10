@@ -80,7 +80,10 @@ export function Confirmation() {
         <img src="/og.png" alt="" className={styles.heroGrip} />
 
         <h2 className={styles.title}>회의가 확정됐어요</h2>
-        <p className={styles.meetingName}>{meeting.title}</p>
+        <p className={styles.meetingName}>
+          {meeting.title}
+          {meeting.id.startsWith('demo-') && <span className={styles.demoBadge}>데모</span>}
+        </p>
 
         <div className={styles.timeBlock}>
           <p className={styles.timeDate}>{month}월 {day}일 ({dayName})</p>

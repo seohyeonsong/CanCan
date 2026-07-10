@@ -53,6 +53,16 @@
   font-size: 15px;
   color: var(--color-grey-600);
 }
+.demoBadge {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f3e8ff;
+  color: #7e22ce;
+  vertical-align: middle;
+}
 
 .timeBlock {
   padding: 20px 32px;

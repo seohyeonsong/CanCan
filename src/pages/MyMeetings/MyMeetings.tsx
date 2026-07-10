@@ -174,7 +174,7 @@ function MeetingCard({ meeting: m, isOwner, responded, onClick }: {
     <button className={styles.card} onClick={onClick}>
       <div className={styles.cardHead}>
         <span className={styles.cardTitle}>{m.title}</span>
-        {m.id === 'demo-kickoff' && <span className={styles.badgeDemo}>데모</span>}
+        {m.id.startsWith('demo-') && <span className={styles.badgeDemo}>데모</span>}
         {m.confirmedSlot ? (
           <span className={styles.chipConfirmed}>확정 완료</span>
         ) : !isOwner && !responded ? (
