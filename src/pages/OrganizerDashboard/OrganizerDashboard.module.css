@@ -873,3 +873,30 @@
   color: #dc2626;
   line-height: 1.4;
 }
+
+/* 주최자 불참 안내 (내 응답하기 자리) */
+.notAttending {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 40px 24px;
+  background: var(--color-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  color: var(--color-grey-400);
+}
+.notAttendingTitle { font-size: 16px; font-weight: 800; color: var(--color-grey-800); margin-top: 4px; }
+.notAttendingDesc { font-size: 13px; color: var(--color-grey-500); line-height: 1.6; }
+.notAttendingBtn {
+  margin-top: 8px;
+  padding: 11px 20px;
+  border-radius: 12px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 150ms;
+}
+.notAttendingBtn:hover { background: var(--color-primary-200); }

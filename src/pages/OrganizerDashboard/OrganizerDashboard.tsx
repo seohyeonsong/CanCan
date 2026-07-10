@@ -485,6 +485,16 @@ export function OrganizerDashboard() {
 
       {/* ===== 오른쪽: 내 응답하기 ===== */}
       <div className={`${styles.respondColumn} ${tab !== 'respond' ? styles.mobileHide : ''}`}>
+        {organizerSkipped ? (
+          <div className={styles.notAttending}>
+            <Icon name="enter" size={22} />
+            <p className={styles.notAttendingTitle}>직접 참여하지 않는 회의예요</p>
+            <p className={styles.notAttendingDesc}>주최자로서 일정만 조율하고 있어요.<br />참석하기로 했다면 아래에서 가능 시간을 입력할 수 있어요.</p>
+            <button className={styles.notAttendingBtn} onClick={() => { if (id) setOrganizerAttending(id, true); refresh() }}>
+              나도 참석할래요
+            </button>
+          </div>
+        ) : (
         <div className={styles.respondSection}>
           <div className={styles.respondHeader}>
             <p className={styles.respondName}>{meeting.organizerName}님의 가능 시간</p>
@@ -507,6 +517,7 @@ export function OrganizerDashboard() {
             {organizerMarkedCount === 0 ? '가능한 시간을 1개 이상 표시해주세요' : submitted ? '응답 수정 완료' : '내 응답 제출하기'}
           </button>
         </div>
+        )}
       </div>{/* end respondColumn */}
 
       </div>{/* end mainLayout */}
