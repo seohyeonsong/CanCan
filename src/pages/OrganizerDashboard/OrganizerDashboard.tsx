@@ -252,7 +252,7 @@ export function OrganizerDashboard() {
         <div className={styles.demoGuide}>
           <div className={styles.demoGuideText}>
             <span className={styles.demoGuideBadge}>주최자 화면</span>
-            <p>참여자들의 응답이 모여 <b>AI가 시간을 추천</b>한 상태예요. 참여자는 어떻게 응답할까요?</p>
+            <p>지금 보는 건 <b>주최자</b> 화면이에요. 참여자 입장은 어떻게 보이는지 직접 체험해볼 수 있어요.</p>
           </div>
           <button className={styles.demoGuideBtn} onClick={() => navigate(`/meeting/${id}/respond`)}>
             참여자로 응답해보기 →

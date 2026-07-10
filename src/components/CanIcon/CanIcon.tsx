@@ -10,7 +10,8 @@ interface CanIconProps {
   required?: boolean
 }
 
-const POM_COLORS = ['blue', 'orange', 'mint', 'pink', 'purple', 'yellow', 'white']
+// 흰색(white)은 밝은 자판기 배경에서 미응답 회색과 구분이 안 돼 제외
+const POM_COLORS = ['blue', 'orange', 'mint', 'pink', 'purple', 'yellow']
 
 // 이름 기반 안정적 색 (colorIndex 없을 때 폴백)
 function pomColorByName(name: string): string {
